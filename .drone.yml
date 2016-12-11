@@ -19,4 +19,5 @@ notify:
     webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
     channel: drone
     username: drone
-    template: > build #{{ build.number }} finished with a {{ build.status }} status
+    template: >
+      build #{{ build.number }} finished with a {{ build.status }} status
