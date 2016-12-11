@@ -13,3 +13,10 @@ publish:
     tag: latest
     file: Dockerfile
     insecure: false
+
+notify:
+  slack:
+    webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
+    channel: drone
+    username: drone
+    template: > build #{{ build.number }} finished with a {{ build.status }} status
