@@ -1,0 +1,17 @@
+ipfs:
+   image: qnib/cp2017-ipfs
+   container_name: ipfs
+   net: host
+   volumes:
+    - /data/ipfs
+    - /export
+
+geth:
+   image: qnib/cp2017-geth
+   container_name: geth
+   net: host
+
+webapp:
+   image: qnib/cp2017-webapp
+   container_name: webapp
+   net: host

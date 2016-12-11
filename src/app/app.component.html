@@ -1,0 +1,58 @@
+<div class="container-fluid display-table">
+  <div class="row display-table-row">
+    <div class="col-md-2 col-xs-1 display-table-cell v-align box" id="navigation">
+      <div class="navi">
+        <ul>
+          <li routerLink="/dashboard" routerLinkActive="active"><a><i class="fa fa-dashboard fa-fw" aria-hidden="true"></i><span
+            class="hidden-xs hidden-sm">Dashboard</span></a>
+          </li>
+          <li routerLink="/system-status" routerLinkActive="active"><a><i class="fa fa-cogs fa-fw" aria-hidden="true"></i><span
+            class="hidden-xs hidden-sm">System status</span></a></li>
+          <li routerLink="/register" routerLinkActive="active"><a><i class="fa fa-edit fa-fw" aria-hidden="true"></i><span
+            class="hidden-xs hidden-sm">Register service</span></a></li>
+          <li routerLink="/catalogue" routerLinkActive="active"><a><i class="fa fa-table fa-fw" aria-hidden="true"></i><span class="hidden-xs hidden-sm">Service catalogue</span></a>
+          </li>
+          <li routerLink="/search" routerLinkActive="active"><a><i class="fa fa-search fa-fw" aria-hidden="true"></i><span
+            class="hidden-xs hidden-sm">Search service</span></a></li>
+          <li routerLink="/my-services" routerLinkActive="active"><a><i class="fa fa-server fa-fw" aria-hidden="true"></i><span
+            class="hidden-xs hidden-sm">My services</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-10 col-sm-11 display-table-cell v-align">
+      <!--<button type="button" class="slide-toggle">Slide Toggle</button> -->
+      <div class="row">
+        <header>
+          <div class="col-md-7">
+            <nav class="navbar-default pull-left">
+              <div class="navbar-header">
+                <div class="logo">
+                  <a routerLink="/dashboard">
+                    <b>Service Marketplace</b>
+                    <!--img src="" alt="marketplace_logo"
+                         class="circle-logo"-->
+                  </a>
+                </div>
+              </div>
+            </nav>
+          </div>
+
+          <div class="col-md-5">
+            <div class="header-rightside">
+              <ul class="list-inline header-top pull-right">
+                <li>
+                  <a href="#" class="icon-info">
+                    <i class="fa fa-question fa-fw" aria-hidden="true"></i> Help
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div id="outlet">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
