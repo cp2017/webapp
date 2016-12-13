@@ -1,8 +1,9 @@
 build:
-  image: node
+  image: node:6.9.2
   commands:
     - npm install -g angular-cli
     - npm install
+    - npm install enhanced-resolve
 
 #publish:
 #  docker:
