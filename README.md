@@ -1,6 +1,4 @@
-[![Build Status](http://wins.ddns.net:8000/api/badges/cp2017/webapp/status.svg)](http://wins.ddns.net:8000/cp2017/webapp)
 # MarketClient
-
 
 A simple proof of concept, that shows how we could combine IPFS and Ethereum in an Angular2 application.
 

@@ -20,4 +20,4 @@ notify:
     channel: drone
     username: drone
     template: >
-      build #{{ build.number }} finished with a {{ build.status }} status
+     {{ repo.full_name }} finished build #{{ build.number }} with status {{ build.status }}
