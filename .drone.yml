@@ -3,6 +3,7 @@ build:
   commands:
     - npm install -g angular-cli
     - npm install
+    - npm install enhanced-resolve
 
 #publish:
 #  docker:
