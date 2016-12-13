@@ -4,15 +4,15 @@ build:
     - npm install -g angular-cli
     - npm install
 
-publish:
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASSWORD
-    email: $$DOCKER_EMAIL
-    repo: cp2017/webapp
-    tag: latest
-    file: Dockerfile
-    insecure: false
+#publish:
+#  docker:
+#    username: $$DOCKER_USER
+#    password: $$DOCKER_PASSWORD
+#    email: $$DOCKER_EMAIL
+#    repo: cp2017/webapp
+#    tag: latest
+#    file: Dockerfile
+#    insecure: false
 
 notify:
   slack:
