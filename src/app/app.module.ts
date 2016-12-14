@@ -12,7 +12,7 @@ import {EthereumService} from "./services/ethereum/ethereum.service";
 import {SafePipe} from './pipes/safe-url.pipe';
 import { ServiceCatalogueComponent } from './service-catalogue-component/service-catalogue.component';
 import { DashboardComponent } from './dashboard-component/dashboard.component';
-import {SearchServiceComponent} from "./search-service-component/search-service.component";
+import {ServiceDetailsComponent} from "./service-details-component/service-details.component";
 import { MyServicesComponent } from './my-services-component/my-services.component';
 import {ServiceRepositoryService} from "./services/service-repository/service-repository.service";
 
@@ -22,7 +22,8 @@ const appRoutes: Routes = [
   {path: 'system-status', component: SystemStatusComponent},
   {path: 'register', component: ServiceRegistrationComponent},
   {path: 'catalogue', component: ServiceCatalogueComponent},
-  {path: 'search/:hash', component: SearchServiceComponent},
+  {path: 'service-details/:hash', component: ServiceDetailsComponent},
+  {path: 'service-details/', component: ServiceDetailsComponent},
   {path: 'my-services', component: MyServicesComponent},
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
@@ -32,7 +33,7 @@ const appRoutes: Routes = [
     AppComponent,
     ServiceRegistrationComponent,
     SystemStatusComponent,
-    SearchServiceComponent,
+    ServiceDetailsComponent,
     SafePipe,
     ServiceCatalogueComponent,
     DashboardComponent,
