@@ -22,6 +22,7 @@
       <h2>Status Ethereum</h2>     
       <div *ngIf="ethereumVersion == null">
         <input type="text" [(ngModel)]="ethereumProvider">
+        <input type="password" [(ngModel)]="ethereumPassword" placeholder="Password for ethereum account" required>
         <button (click)="onEthereumConnectClick()">Connect to ethereum provider</button>
       </div>
 

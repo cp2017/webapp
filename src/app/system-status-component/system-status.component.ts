@@ -23,6 +23,7 @@ export class SystemStatusComponent implements OnInit {
   private ethereumNetworkProtocolVersion: string = null;
   private ethereumVersion: string = null;
   private ethereumProvider: string = "http://localhost:8545";
+  private ethereumPassword: string = "";
 
   // Example contract
   private testContract: any = null;
@@ -47,7 +48,7 @@ export class SystemStatusComponent implements OnInit {
   }
 
   private onEthereumConnectClick() {
-    this._ethereumService.initWeb3(this.ethereumProvider).then(web3Ethereum => {
+    this._ethereumService.initWeb3(this.ethereumProvider, this.ethereumPassword).then(web3Ethereum => {
       this.web3Version = web3Ethereum.version.api;
       this.ethereumClientVersion = web3Ethereum.version.node;
       this.ethereumNetworkProtocolVersion = web3Ethereum.version.network;

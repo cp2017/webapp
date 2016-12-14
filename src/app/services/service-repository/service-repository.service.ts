@@ -23,35 +23,45 @@ export class ServiceRepositoryService {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
-        // 1. Add swaggerfile to IPFS and get a hash for it (lets call it saggerHash)
-        this._ipfsService.putToIpfs(swaggerJson).then(ipfsSwaggerFile => {
-          let swaggerHash = ipfsSwaggerFile.hash;
-          console.log("Step 1 succeeded: IPFS swagger hash " + swaggerHash);
+        // 0. Unlock the default ethereum account by calling the unlockAccount function of the ethereum service
+        this._ethereumService.unlockDefaultAccount()
+          .then(result => {
+            console.log("Account unlocked");
 
-          // 2. Create a new Microservice(name, description, swaggerHash) entity and convert it to JSON
-          let microserviceObject: Microservice = new Microservice(name, description, swaggerHash);
-          let serviceJsonString = JSON.stringify(microserviceObject);
+            // 1. Add swaggerfile to IPFS and get a hash for it (lets call it saggerHash)
+            this._ipfsService.putToIpfs(swaggerJson).then(ipfsSwaggerFile => {
+              let swaggerHash = ipfsSwaggerFile.hash;
+              console.log("Step 1 succeeded: IPFS swagger hash " + swaggerHash);
 
-          // 3. Put that JSON to IPFS and get a hash for the metadata --> serviceHash
-          this._ipfsService.putToIpfs(serviceJsonString).then(ipfsServiceFile => {
-            let serviceHash = ipfsServiceFile.hash;
-            console.log("Step 2 succeeded: IPFS service hash " + serviceHash);
+              // 2. Create a new Microservice(name, description, swaggerHash) entity and convert it to JSON
+              let microserviceObject: Microservice = new Microservice(name, description, swaggerHash);
+              let serviceJsonString = JSON.stringify(microserviceObject);
 
-            // 4. Call the ethereum contract to register that metadataHash
-            let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-              .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-            let result = registrationContract.Register(serviceHash);
-            console.log("Step 3 succeeded: Ethereum transaction id " + result);
+              // 3. Put that JSON to IPFS and get a hash for the metadata --> serviceHash
+              this._ipfsService.putToIpfs(serviceJsonString).then(ipfsServiceFile => {
+                let serviceHash = ipfsServiceFile.hash;
+                console.log("Step 2 succeeded: IPFS service hash " + serviceHash);
 
-            // 5. Done
-            resolve(serviceHash);
+                // 4. Call the ethereum contract to register that metadataHash
+                let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+                  .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+                let result = registrationContract.Register(serviceHash);
+                console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
-          }).catch(err => {
-            reject(err);
+                // 5. Done
+                resolve(serviceHash);
+
+              }).catch(err => {
+                reject(err);
+              });
+            }).catch(err => {
+              reject(err);
+            });
+          })
+          .catch(err => {
+            console.error("Account unlock error: " + err);
+            reject("Account unlock error: " + err);
           });
-        }).catch(err => {
-          reject(err);
-        });
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first!"));
       }
