@@ -7,6 +7,8 @@ export class EthereumService {
 
   // The web3 connection to ethereum
   private _web3: any = null;
+  // The password for the default ethereum account
+  private _accountPassword: string = null;
   // A test contract (if deployed)
   private testContract: any;
 
@@ -19,17 +21,45 @@ export class EthereumService {
 
   /**
    * Initializes the web3 connection to the given ethereum provider.
-   * @returns {Promise<TResult>|Promise<U>}
+   * @param provider The ethereum client provider. Typically a string like "http://localhost:8545"
+   * @param accountPassword The password for the default ethereum account. It will be used when you want to unlock the account later.
+   * @returns {Promise<T>} Returns a promise that resolves the web3 object it is connected to the ethereum client.
    */
-  initWeb3(provider: string): Promise<any> {
+  initWeb3(provider: string, accountPassword: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._web3 == null) {
         let httpProvider = new (<any>Web3).providers.HttpProvider(provider);
         this._web3 = new Web3(httpProvider);
         this._web3.eth.defaultAccount = this._web3.eth.accounts[0];
+        this._accountPassword = accountPassword;
         resolve(this._web3);
       } else {
         resolve(this._web3);
+      }
+    });
+    return promise;
+  }
+
+  /**
+   * Unlocks the default ethereum account with the password provided at the beginning (when initializing
+   * the connection to the ethereum client).
+   * @returns {Promise<T>} Returns a promise that resolves the web3 object as soon as the account is unlocked.
+   */
+  unlockDefaultAccount(): Promise<any> {
+    let promise = new Promise((resolve, reject) => {
+      if (this._web3 != null && this._accountPassword != null) {
+        this._web3.personal.unlockAccount(this._web3.eth.defaultAccount, this._accountPassword, 999, (error, result) => {
+          if (!error) {
+        //    console.log(result);
+            resolve(this._web3);
+          }
+          else {
+            console.error(error);
+            reject(this._web3);
+          }
+        });
+      } else {
+        reject(this._web3);
       }
     });
     return promise;

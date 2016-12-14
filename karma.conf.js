@@ -10,16 +10,18 @@ module.exports = function (config) {
       require('karma-chrome-launcher'),
       require('karma-remap-istanbul'),
       require('angular-cli/plugins/karma'),
-      require('karma-phantomjs-launcher')
+      require('karma-nightmare')
     ],
     files: [
-      { pattern: './src/test.ts', watched: false }
+      './node_modules/babel-polyfill/dist/polyfill.js',
+      {pattern: './src/test.ts', watched: false},
+      {pattern: './src/assets/ipfs-api/dist/index.js', watched: false}
     ],
     preprocessors: {
       './src/test.ts': ['angular-cli']
     },
     mime: {
-      'text/x-typescript': ['ts','tsx']
+      'text/x-typescript': ['ts', 'tsx']
     },
     remapIstanbulReporter: {
       reports: {
@@ -32,30 +34,26 @@ module.exports = function (config) {
       environment: 'dev'
     },
     reporters: config.angularCli && config.angularCli.codeCoverage
-              ? ['progress', 'karma-remap-istanbul']
-              : ['progress'],
+      ? ['progress', 'karma-remap-istanbul']
+      : ['progress'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['PhantomJS_custom'],
+  //  browsers: ['Chrome'],
+    browsers: ['Nightmare'],
+    nightmareOptions: {
+      width: 800,
+      height: 600,
+      show: false
+    },
     // you can define custom flags
     customLaunchers: {
-      'PhantomJS_custom': {
-        base: 'PhantomJS',
-        options: {
-          windowName: 'my-window',
-          settings: {
-            webSecurityEnabled: false
-          }
-        },
-        flags: ['--load-images=true'],
-        debug: true
+      'NodeWebkitWithCustomPath': {
+        base: 'NodeWebkit',
+        // Remember to include 'node_modules' if you have some modules there
+        paths: ['node_modules', 'node_modules']
       }
-    },
-    phantomjsLauncher: {
-      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
-      exitOnResourceError: true
     },
     singleRun: false
   });

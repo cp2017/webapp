@@ -35,7 +35,7 @@ export class IpfsService {
             resolve(node);
           })
           .catch((err) => {
-            console.log('Fail: ', err);
+            console.log('Connect Ipfs Daemon failed: ' + err.message);
             reject(err);
           });
       } else {
