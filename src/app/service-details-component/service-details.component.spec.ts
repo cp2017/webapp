@@ -6,7 +6,6 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { ServiceDetailsComponent } from './service-details.component';
 import { SafePipe } from "../pipes/safe-url.pipe";
-import { MockActivatedRoute } from '../services/mocks/mock-activated-route.service';
 
 describe('ServiceDetailsComponent', () => {
   let component: ServiceDetailsComponent;
@@ -21,16 +20,7 @@ describe('ServiceDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.overrideComponent(ServiceDetailsComponent, {
-      set: {
-        providers: [
-          {
-            provide: ActivatedRoute,
-            useClass: MockActivatedRoute
-          }
-        ]
-      }
-    }).createComponent(ServiceDetailsComponent);
+    fixture = TestBed.createComponent(ServiceDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -42,5 +32,5 @@ describe('ServiceDetailsComponent', () => {
   it('should set the initial url', () =>{
     expect(component.url).toContain(component.baseUrl);
     expect(component.url).toContain(component.swaggerUrl);
-  });
+  }); 
 });
