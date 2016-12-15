@@ -7,6 +7,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { ServiceDetailsComponent } from './service-details.component';
 import { SafePipe } from "../pipes/safe-url.pipe";
+import { ServiceRepositoryService } from '../services/service-repository/service-repository.service';
+import {EthereumService} from "../services/ethereum/ethereum.service";
+import {IpfsService} from "../services/ipfs/ipfs.service";
 
 describe('ServiceDetailsComponent', () => {
   let component: ServiceDetailsComponent;
@@ -17,7 +20,8 @@ describe('ServiceDetailsComponent', () => {
       imports: [
         RouterTestingModule
       ],
-      declarations: [ ServiceDetailsComponent, SafePipe]
+      declarations: [ ServiceDetailsComponent, SafePipe],
+      providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
     .compileComponents();
   }));

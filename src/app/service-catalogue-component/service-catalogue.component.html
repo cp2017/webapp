@@ -8,14 +8,14 @@
         <tr>
           <th>Name</th>
           <th>Description</th>
-          <th>Swagger-URL</th>
+          <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let service of services | serviceFilter:searchText.value">
           <td>{{service.name}}</td>
           <td>{{service.description}}</td>
-          <td><a *ngIf="service.hashToSwaggerFile" [routerLink]="['/service-details', service.hashToSwaggerFile]">Open swagger file</a></td>
+          <td><a *ngIf="service.hashToSwaggerFile" [routerLink]="['/service-details', service.id]">Show details</a></td>
         </tr>
         </tbody>
       </table>

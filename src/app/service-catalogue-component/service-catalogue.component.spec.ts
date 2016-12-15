@@ -20,7 +20,7 @@ describe('ServiceCatalogueComponent', () => {
       imports: [
         RouterTestingModule.withRoutes([
           {
-            path: 'service-details/:hash', component: DummyServiceDetails
+            path: 'service-details/:service', component: DummyServiceDetails
           }
         ])
       ],

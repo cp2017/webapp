@@ -1,5 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {ServiceRepositoryService} from '../services/service-repository/service-repository.service';
+import { Microservice } from '../services/entities/microservice';
 
 @Component({
   selector: 'app-service-details',
@@ -12,9 +14,11 @@ export class ServiceDetailsComponent implements OnInit {
     private _baseUrl: string = "http://petstore.swagger.io";
     private _swaggerUrl: string;
     private _url: string;
-    private sub: any;
+    private _sub: any;
+    private _service: Microservice;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private _serviceRepositoryService: ServiceRepositoryService) {
+      this._service = new Microservice("","","");
       this._swaggerUrl = "http://your-url-here.com";
       this.buildUrl();
   }
@@ -24,9 +28,14 @@ export class ServiceDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
+    this._sub = this.route.params.subscribe(params => {
       console.log(params);
-      this._swaggerUrl = "https://ipfs.io/ipfs/" + params["hash"];
+      let serviceId = params["hash"];
+      if(!serviceId){
+        return;
+      }
+      this._service = this._serviceRepositoryService.getMicroserviceById(serviceId);
+      this._swaggerUrl = "https://ipfs.io/ipfs/" + this._service.hashToSwaggerFile;
       this.buildUrl();
     });
   }
@@ -41,5 +50,9 @@ export class ServiceDetailsComponent implements OnInit {
 
   public get baseUrl() : string {
     return this._baseUrl;
+  }
+
+  public get service() : Microservice {
+    return this._service;
   }
 }

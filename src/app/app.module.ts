@@ -24,7 +24,6 @@ const appRoutes: Routes = [
   {path: 'register', component: ServiceRegistrationComponent},
   {path: 'catalogue', component: ServiceCatalogueComponent},
   {path: 'service-details/:hash', component: ServiceDetailsComponent},
-  {path: 'service-details/', component: ServiceDetailsComponent},
   {path: 'my-services', component: MyServicesComponent},
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
