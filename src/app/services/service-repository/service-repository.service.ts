@@ -78,13 +78,23 @@ export class ServiceRepositoryService {
   getAllServices(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
+        console.log('ipfs + ethereum : ok')
         // TODO:
         // 1. Get all hashes from the Blockchain
-        
-        let serviceHashList: string[] = [
-          "QmbV8ov1GPHFQcJvuHfidRAeZ244YNNYqvoAMFCRnt56KG",
-          "QmXZVxyFn6in8R3bEmN9RNwxCcGp3aToaQzE6pAYv18Dm4"
-        ];
+
+        let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+          .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+        let servicesCount = serviceRegistery.ServicesCount();
+        let serviceHashList: string[] = [];
+        for (let i = 0; i < servicesCount; i++) {
+            serviceHashList.push(serviceRegistery.services(i));
+        }
+        console.log('ServicesCount ' + servicesCount);
+        console.log('serviceHashList ' + serviceHashList.length);
+
+
+        //let serviceHashList: string[] = ["Qmc33Sjp9xzRW5zbXPhUQCBfuFSqckuYkYN1nD7btSeYjq",
+        //"Qmem6Dv6pVjXLXcw8gKUqWHycSo8r63gLyeMVBxeGxBbYd"];
 
         let microservices: Microservice[] = [];
         for(let serviceHash of serviceHashList){
