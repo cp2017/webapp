@@ -9,33 +9,37 @@ import { ActivatedRoute } from '@angular/router';
 
 export class ServiceDetailsComponent implements OnInit {
 
-    private baseUrl: string;
-    private swaggerUrl: string;
-    private url: string;
+    private _baseUrl: string = "http://petstore.swagger.io";
+    private _swaggerUrl: string;
+    private _url: string;
     private sub: any;
 
   constructor(private route: ActivatedRoute) {
-      this.baseUrl = "http://petstore.swagger.io/";
-      this.swaggerUrl = "http://your-url-here.com";
-      this.buildUrl();
-  }
-
-  updateUrl(){
-      //this.swaggerUrl = "http://localhost:8080/ipfs/QmTVYom5k8Q1XnRaWGeHmwAAcnjFcoAA6Yju6RqqsrznUG";
-      this.swaggerUrl = "http://petstore.swagger.io/v2/swagger.json";
+      this._swaggerUrl = "http://your-url-here.com";
       this.buildUrl();
   }
 
   buildUrl(){
-      this.url = this.baseUrl + "?url=" + this.swaggerUrl;
+      this._url = this._baseUrl + "?url=" + this._swaggerUrl;
   }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       console.log(params);
-      this.swaggerUrl = "https://ipfs.io/ipfs/" + params["hash"]; // (+) converts string 'id' to a number
+      this._swaggerUrl = "https://ipfs.io/ipfs/" + params["hash"]; // (+) converts string 'id' to a number
       this.buildUrl();
     });
   }
 
+  public get url() : string {
+    return this._url;
+  }
+
+  public get swaggerUrl() : string {
+    return this._swaggerUrl;
+  }
+
+  public get baseUrl() : string {
+    return this._baseUrl;
+  }
 }

@@ -1,4 +1,5 @@
 <h1>Service catalogue</h1>
+<input class="pull-right" type="text" (input)="field = 'searchText'" #searchText  (keyup)="0" placeholder="Search...">
 <div class="row">
   <div class="col-xs-12 gutter">
     <div class="service-catalogue content-box">
@@ -11,7 +12,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let service of services">
+        <tr *ngFor="let service of services | serviceFilter:searchText.value">
           <td>{{service.name}}</td>
           <td>{{service.description}}</td>
           <td><a *ngIf="service.hashToSwaggerFile" [routerLink]="['/service-details', service.hashToSwaggerFile]">Open swagger file</a></td>
