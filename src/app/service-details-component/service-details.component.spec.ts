@@ -2,7 +2,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { ServiceDetailsComponent } from './service-details.component';
 import { SafePipe } from "../pipes/safe-url.pipe";
@@ -13,8 +14,10 @@ describe('ServiceDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServiceDetailsComponent, SafePipe],
-      providers: [ActivatedRoute],
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [ ServiceDetailsComponent, SafePipe]
     })
     .compileComponents();
   }));

@@ -9,7 +9,6 @@ import { ServiceCatalogueComponent } from './service-catalogue.component';
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 import {IpfsService} from "../services/ipfs/ipfs.service";
 import {EthereumService} from "../services/ethereum/ethereum.service";
-import {SafePipe} from "../pipes/safe-url.pipe";
 import {ServiceFilterPipe} from "../pipes/service-filter.pipe";
 
 describe('ServiceCatalogueComponent', () => {

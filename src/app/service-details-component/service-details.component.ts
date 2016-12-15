@@ -26,7 +26,7 @@ export class ServiceDetailsComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       console.log(params);
-      this._swaggerUrl = "https://ipfs.io/ipfs/" + params["hash"]; // (+) converts string 'id' to a number
+      this._swaggerUrl = "https://ipfs.io/ipfs/" + params["hash"];
       this.buildUrl();
     });
   }

@@ -3,9 +3,12 @@ import {Microservice} from "../services/entities/microservice";
 
 @Pipe({name: 'serviceFilter'})
 export class ServiceFilterPipe implements PipeTransform {
-    transform(value: any, args: string): any{
+    transform(value: Microservice[], args: string): any{
         let filterText = args;
-        let services : Microservice[] = value;
+        let services : Microservice[] = [];
+        if(value){
+            services = value;
+        }
         return filterText ? services.filter(service => {
             filterText = filterText.toLowerCase();
             if(service.name && service.name.toLowerCase().indexOf(filterText) >= 0){
