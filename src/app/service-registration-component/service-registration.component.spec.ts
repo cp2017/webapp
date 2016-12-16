@@ -30,6 +30,6 @@ describe('ServiceRegistrationComponent', () => {
 
   it('should create', () => {
    // expect(component).toBeTruthy();
-    expect(true).toBeTruthy();
+    expect(component).toBeDefined();
   });
 });

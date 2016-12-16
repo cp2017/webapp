@@ -7,6 +7,8 @@ import {ContractProviderService} from "../contract-provider/contract-provider.se
 @Injectable()
 export class ServiceRepositoryService {
 
+  private localServiceList: Microservice[];
+
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
 
@@ -79,6 +81,7 @@ export class ServiceRepositoryService {
         console.log('ipfs + ethereum : ok')
         // TODO:
         // 1. Get all hashes from the Blockchain
+
         let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
           .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
         let servicesCount = serviceRegistery.ServicesCount();
@@ -97,13 +100,15 @@ export class ServiceRepositoryService {
         for(let serviceHash of serviceHashList){
           this._ipfsService.getFromIpfs(serviceHash).then(ipfsServiceFile => {
             let serviceObj = JSON.parse(ipfsServiceFile);
-            microservices.push(new Microservice(serviceObj._name, serviceObj._description, serviceObj._hashToSwaggerFile));
-            console.log(serviceObj._name + ", " + serviceObj._description + ", " + serviceObj._hashToSwaggerFile);
+            let mService: Microservice = new Microservice(serviceObj._name, serviceObj._description, serviceObj._hashToSwaggerFile);
+            mService.id = serviceHash;
+            microservices.push(mService);
+            console.log(mService.id + ", " + serviceObj._name + ", " + serviceObj._description + ", " + serviceObj._hashToSwaggerFile);
           }).catch(err => {
             reject(err);
           });
         }
-
+        this.localServiceList = microservices;
         resolve(microservices);
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
@@ -131,5 +136,17 @@ export class ServiceRepositoryService {
       }
     });
     return promise;
+  }
+
+
+  public getMicroserviceById(id: string): Microservice{
+    let service: Microservice[] = this.localServiceList.filter(function(currService){
+      return currService.id == id;
+    });
+    if(service.length > 1){
+      console.error("filter returned more than one service with identical id!");
+      return null;
+    }
+    return service ? service[0] : null;
   }
 }

@@ -10,6 +10,7 @@ import {SystemStatusComponent} from './system-status-component/system-status.com
 import {IpfsService} from "./services/ipfs/ipfs.service";
 import {EthereumService} from "./services/ethereum/ethereum.service";
 import {SafePipe} from './pipes/safe-url.pipe';
+import {ServiceFilterPipe} from './pipes/service-filter.pipe';
 import { ServiceCatalogueComponent } from './service-catalogue-component/service-catalogue.component';
 import { DashboardComponent } from './dashboard-component/dashboard.component';
 import {ServiceDetailsComponent} from "./service-details-component/service-details.component";
@@ -23,7 +24,6 @@ const appRoutes: Routes = [
   {path: 'register', component: ServiceRegistrationComponent},
   {path: 'catalogue', component: ServiceCatalogueComponent},
   {path: 'service-details/:hash', component: ServiceDetailsComponent},
-  {path: 'service-details/', component: ServiceDetailsComponent},
   {path: 'my-services', component: MyServicesComponent},
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
@@ -35,6 +35,7 @@ const appRoutes: Routes = [
     SystemStatusComponent,
     ServiceDetailsComponent,
     SafePipe,
+    ServiceFilterPipe,
     ServiceCatalogueComponent,
     DashboardComponent,
     MyServicesComponent
@@ -48,6 +49,7 @@ const appRoutes: Routes = [
   providers: [IpfsService, EthereumService, ServiceRepositoryService],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 
 
