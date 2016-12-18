@@ -27,5 +27,4 @@ notify:
 
 matrix:
   NODE_VERSION:
-   - 6.9.2
    - 7.2.1
