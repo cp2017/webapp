@@ -30,7 +30,7 @@ export class IpfsService {
 
         node.id()
           .then((id) => {
-            console.log('My IPFS node id is: ', JSON.stringify(id));
+            console.log('My IPFS node id is: ', id.id);
             this._node = node;
             resolve(node);
           })
