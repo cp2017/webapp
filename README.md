@@ -42,8 +42,8 @@ $ ipfs config Addresses.API
 # Set it if it does not match the above output
 $ ipfs config Addresses.API /ip4/127.0.0.1/tcp/5001
  
-# Put our domain to the whitelist of the daemon to avoid CORS failures
-$ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"http://localhost:4200\"]"
+# Put our domain (localhost:4200) to the whitelist of the daemon to avoid CORS failures. Also add the port of the Karma test framework to the whiltelist (localhost:9876).
+$ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"http://localhost:4200\",\"http://localhost:9876\"]"
 $ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials "[\"true\"]"
 $ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods "[\"PUT\", \"POST\", \"GET\"]"
   
