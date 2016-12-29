@@ -87,13 +87,11 @@ export class ServiceRepositoryService {
 
         let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
           .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-        let servicesCount = serviceRegistery.ServicesCount();
+        let servicesCount = serviceRegistery.servicesCount();
         let serviceHashList: string[] = [];
         for (let i = 1; i <= servicesCount; i++) {
             serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
-            console.log('ServiceIpfsHash ' + serviceRegistery.services(i));
-            console.log('ServiceIpfsHash ' + multihash.encode(serviceRegistery.services(i)));
-        }
+            }
         console.log('ServicesCount ' + servicesCount);
         console.log('serviceHashList ' + serviceHashList.length);
 
