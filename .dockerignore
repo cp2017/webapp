@@ -2,3 +2,4 @@ docker-compose.yml
 README.md
 Dockerfile
 docker
+node_modules

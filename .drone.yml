@@ -1,30 +1,40 @@
 build:
-  image: node:$$NODE_VERSION
-  commands:
-    - npm install -g angular-cli
-    - npm install
-    - npm install enhanced-resolve
+  test:
+    image: cp2017/xvfb
+    commands:
+      - npm install -g angular-cli
+      - npm install
+      - npm install enhanced-resolve
+      - ./test.sh
 
-#publish:
-#  docker:
-#    username: $$DOCKER_USER
-#    password: $$DOCKER_PASSWORD
-#    email: $$DOCKER_EMAIL
-#    repo: cp2017/webapp
-#    tag: latest
-#    file: Dockerfile
-#    insecure: false
+compose:
+  ipfs:
+   image: qnib/cp2017-ipfs
+   container_name: ipfs
+   volumes:
+    - /data/ipfs
+    - /export
+  geth:
+   image: qnib/cp2017-geth
+   container_name: geth
 
-notify:
-  slack:
-    webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
-    channel: drone
-    username: drone
-    template: >
-      {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
-    when:
-      branch: master
+publish:
+  docker:
+    username: $$DOCKER_USER
+    password: $$DOCKER_PASSWORD
+    email: $$DOCKER_EMAIL
+    repo: cp2017/webapp
+    tag: latest
+    file: Dockerfile
+    insecure: false
 
-matrix:
-  NODE_VERSION:
-   - 7.2.1
+#notify:
+#  slack:
+#    webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
+#    channel: drone
+#    username: drone
+#    template: >
+#      {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
+#    when:
+#      branch: master
+
