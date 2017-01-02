@@ -15,7 +15,8 @@ module.exports = function (config) {
     files: [
       './node_modules/babel-polyfill/dist/polyfill.js',
       {pattern: './src/test.ts', watched: false},
-      {pattern: './src/assets/ipfs-api/dist/index.js', watched: false}
+      {pattern: './src/assets/ipfs-api/dist/index.js', watched: false},
+      {pattern: './node_modules/web3/dist/web3.js', watched: false}
     ],
     preprocessors: {
       './src/test.ts': ['angular-cli']
@@ -46,14 +47,6 @@ module.exports = function (config) {
       width: 800,
       height: 600,
       show: false
-    },
-    // you can define custom flags
-    customLaunchers: {
-      'NodeWebkitWithCustomPath': {
-        base: 'NodeWebkit',
-        // Remember to include 'node_modules' if you have some modules there
-        paths: ['node_modules', 'node_modules']
-      }
     },
     singleRun: false
   });
