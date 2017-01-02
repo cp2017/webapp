@@ -1,5 +1,4 @@
-# MarketClient [![Build Status](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/api/badges/cp2017/webapp/status.svg)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/cp2017/webapp) [![Coverage](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/badges/cp2017/webapp/coverage.svg
-)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/cp2017/webapp)
+# MarketClient [![Build Status](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/api/badges/cp2017/webapp/status.svg)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/cp2017/webapp) [![Coverage](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/badges/cp2017/webapp/coverage.svg)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/cp2017/webapp)
 
 A simple proof of concept, that shows how we could combine IPFS and Ethereum in an Angular2 application.
 
