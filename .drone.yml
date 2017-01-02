@@ -1,11 +1,28 @@
 build:
-  image: node:$$NODE_VERSION
-  commands:
-    - npm install -g angular-cli
-    - npm install
-    - npm install enhanced-resolve
+  test:
+    image: cp2017/xvfb
+    commands:
+      - npm install -g angular-cli
+      - npm install
+      - npm install enhanced-resolve
+      - ./test.sh
 
-#publish:
+compose:
+  ipfs:
+   image: qnib/cp2017-ipfs
+   container_name: ipfs
+   volumes:
+    - /data/ipfs
+    - /export
+  geth:
+   image: qnib/cp2017-geth
+   container_name: geth
+
+publish:
+  coverage:
+    server: http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
+    token: $$GITHUB_API_KEY
+    includes: coverage/coverage.lcov
 #  docker:
 #    username: $$DOCKER_USER
 #    password: $$DOCKER_PASSWORD
@@ -25,6 +42,3 @@ notify:
     when:
       branch: master
 
-matrix:
-  NODE_VERSION:
-   - 7.2.1
