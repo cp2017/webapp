@@ -23,14 +23,6 @@ publish:
     server: http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
     token: $$GITHUB_API_KEY
     includes: coverage/coverage.lcov
-#  docker:
-#    username: $$DOCKER_USER
-#    password: $$DOCKER_PASSWORD
-#    email: $$DOCKER_EMAIL
-#    repo: cp2017/webapp
-#    tag: latest
-#    file: Dockerfile
-#    insecure: false
 
 notify:
   slack:
