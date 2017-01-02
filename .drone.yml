@@ -19,6 +19,9 @@ compose:
    container_name: geth
 
 publish:
+  coverage:
+    server: http://http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
+    token: $$GITHUB_API_KEY
   docker:
     username: $$DOCKER_USER
     password: $$DOCKER_PASSWORD
