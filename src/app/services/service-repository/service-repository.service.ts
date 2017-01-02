@@ -3,6 +3,7 @@ import {IpfsService} from "../ipfs/ipfs.service";
 import {EthereumService} from "../ethereum/ethereum.service";
 import {Microservice} from "../entities/microservice";
 import {ContractProviderService} from "../contract-provider/contract-provider.service";
+import multihash from "multi-hash";
 
 @Injectable()
 export class ServiceRepositoryService {
@@ -47,7 +48,9 @@ export class ServiceRepositoryService {
                 // 4. Call the ethereum contract to register that metadataHash
                 let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
                   .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-                let result = registrationContract.Register(serviceHash);
+                
+                console.log("0x" + multihash.decode(serviceHash).toString("hex"));
+                let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
                 console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                 // 5. Done
@@ -84,11 +87,11 @@ export class ServiceRepositoryService {
 
         let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
           .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-        let servicesCount = serviceRegistery.ServicesCount();
+        let servicesCount = serviceRegistery.servicesCount();
         let serviceHashList: string[] = [];
-        for (let i = 0; i < servicesCount; i++) {
-            serviceHashList.push(serviceRegistery.services(i));
-        }
+        for (let i = 1; i <= servicesCount; i++) {
+            serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
+            }
         console.log('ServicesCount ' + servicesCount);
         console.log('serviceHashList ' + serviceHashList.length);
 
