@@ -16,7 +16,7 @@ services:
    image: qnib/cp2017-ipfs
    container_name: ipfs
   geth:
-   image: qnib/cp2017-geth
+   image: cp2017/geth
    container_name: geth
 
 
