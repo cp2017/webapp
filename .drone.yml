@@ -27,9 +27,6 @@ services:
   ipfs:
    image: qnib/cp2017-ipfs
    container_name: ipfs
-   volumes:
-    - /data/ipfs
-    - /export
   geth:
    image: qnib/cp2017-geth
    container_name: geth
