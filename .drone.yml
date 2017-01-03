@@ -4,8 +4,15 @@ pipeline:
     commands:
       - npm install typescript
       - npm install enhanced-resolve
-      - npm install 
+      - npm install
       - ./test.sh
+
+  publish:
+    coverage:
+      server: http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
+      token: $$GITHUB_API_KEY
+      includes: coverage/coverage.lcov
+
 
 services:
   ipfs:
@@ -17,12 +24,6 @@ services:
   geth:
    image: qnib/cp2017-geth
    container_name: geth
-
-publish:
-  coverage:
-    server: http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
-    token: $$GITHUB_API_KEY
-    includes: coverage/coverage.lcov
 
 notify:
   slack:
