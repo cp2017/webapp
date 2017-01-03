@@ -10,7 +10,7 @@ pipeline:
     image: plugins/slack
     channel: drone
     username: drone
-    template: > build {{ build.number }} finished with {{ build.status }} ({{ build.link }}, event: {{ build.event }}, duration: {{ since build.started }}).
+    template: | build {{ build.number }} finished with {{ build.status }} ({{ build.link }}, event: {{ build.event }}, duration: {{ since build.started }}).
 
 services:
   ipfs:
