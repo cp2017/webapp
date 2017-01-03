@@ -7,7 +7,7 @@ import {EthereumService} from './ethereum.service';
 describe('EthereumService', () => {
 
   let ETHEREUM_CLIENT_ADDRESS = "http://localhost:8545";
-
+  let ETHEREUM_CLIENT_DEFAULT_ACCOUNT_PW = "pw0";
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -45,6 +45,39 @@ describe('EthereumService', () => {
 
       // Test whether it is a promise
       expect(promise).toEqual(jasmine.any(Promise));
+
+      // Wait two seconds and check whether the promise is resolved
+      setTimeout(() => {
+        expect(resolved).toBeTruthy();
+      }, 2000);
+    })));
+
+  it('should unlock the default ethereum account with the password ' + ETHEREUM_CLIENT_DEFAULT_ACCOUNT_PW,
+    async(inject([EthereumService], (service: EthereumService) => {
+      let resolved: boolean = false;
+
+
+      service.initWeb3(ETHEREUM_CLIENT_ADDRESS, ETHEREUM_CLIENT_DEFAULT_ACCOUNT_PW)
+        .then(
+          web3Ethereum => {
+            let promise = service.unlockDefaultAccount().then(result => {
+              resolved = true;
+              expect(result).toBeTruthy();
+            }).catch(err => {
+              resolved = true;
+              // We don't expect an error
+              expect(err).toBeUndefined();
+            });
+
+            // Test whether it is a promise
+            expect(promise).toEqual(jasmine.any(Promise));
+          })
+        .catch(err => {
+            resolved = true;
+            // We don't expect an error
+            expect(err).toBeUndefined();
+          }
+        );
 
       // Wait two seconds and check whether the promise is resolved
       setTimeout(() => {

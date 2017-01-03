@@ -49,16 +49,15 @@ export class EthereumService {
       if (this._web3 != null && this._accountPassword != null) {
         this._web3.personal.unlockAccount(this._web3.eth.defaultAccount, this._accountPassword, 999, (error, result) => {
           if (!error) {
-        //    console.log(result);
-            resolve(this._web3);
+            resolve(result);
           }
           else {
             console.error(error);
-            reject(this._web3);
+            reject(error);
           }
         });
       } else {
-        reject(this._web3);
+        reject(new Error("Account password not set or no connection to ethereum client"));
       }
     });
     return promise;
