@@ -2,9 +2,9 @@ pipeline:
   build:
     image: cp2017/xvfb
     commands:
-      - npm install -g typescript
-      - npm install -g enhanced-resolve
-      - npm install -g
+      - npm install typescript
+      - npm install enhanced-resolve
+      - npm install 
       - ./test.sh
 
 services:
