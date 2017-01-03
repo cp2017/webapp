@@ -6,13 +6,13 @@ pipeline:
       - npm install enhanced-resolve
       - npm install
       - ./test.sh
+
   notify:
     image: plugins/slack
     webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
     channel: drone
     username: drone
-    template: >
-      {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
+    template: {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
 
 #  publish:
 #    image: plugins/coverage:
