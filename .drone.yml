@@ -1,13 +1,13 @@
-build:
-  test:
+pipeline:
+  build:
     image: cp2017/xvfb
     commands:
-      - npm install -g angular-cli
-      - npm install
-      - npm install enhanced-resolve
+      - npm install -g typescript
+      - npm install -g enhanced-resolve
+      - npm install -g
       - ./test.sh
 
-compose:
+services:
   ipfs:
    image: qnib/cp2017-ipfs
    container_name: ipfs
@@ -33,4 +33,3 @@ notify:
       {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
     when:
       branch: master
-
