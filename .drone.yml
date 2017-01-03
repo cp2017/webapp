@@ -8,9 +8,14 @@ pipeline:
       - ./test.sh
   slack:
     image: plugins/slack
-    webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
     channel: drone
     username: drone
+    template: |
+     {{ #success build.status }}
+       build {{ build.number }} succeeded ({{ build.link }}).  Good job.
+     {{ else }}
+       build {{ build.number }} failed ({{ build.link }}). Fix me please.
+     {{ /success }}
 
 services:
   ipfs:
