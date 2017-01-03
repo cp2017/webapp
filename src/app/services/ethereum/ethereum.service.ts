@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import Web3 from "web3";
-
+declare var Web3: any;
 
 @Injectable()
 export class EthereumService {
@@ -25,7 +24,7 @@ export class EthereumService {
    * @param accountPassword The password for the default ethereum account. It will be used when you want to unlock the account later.
    * @returns {Promise<T>} Returns a promise that resolves the web3 object it is connected to the ethereum client.
    */
-  initWeb3(provider: string, accountPassword: string): Promise<any> {
+  initWeb3(provider: string, accountPassword?: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._web3 == null) {
         let httpProvider = new (<any>Web3).providers.HttpProvider(provider);
@@ -50,16 +49,15 @@ export class EthereumService {
       if (this._web3 != null && this._accountPassword != null) {
         this._web3.personal.unlockAccount(this._web3.eth.defaultAccount, this._accountPassword, 999, (error, result) => {
           if (!error) {
-        //    console.log(result);
-            resolve(this._web3);
+            resolve(result);
           }
           else {
             console.error(error);
-            reject(this._web3);
+            reject(error);
           }
         });
       } else {
-        reject(this._web3);
+        reject(new Error("Account password not set or no connection to ethereum client"));
       }
     });
     return promise;

@@ -57,10 +57,10 @@ To talk to an ethereum node from inside a JavaScript application we use the web3
 interface for the RPC methods. See the JavaScript API for more.
 
 You need to start your client with the --rpc flag, in order to connect to it from the javascript application. Because we are accessing the RPC from a browser, CORS will need to be enabled with the appropriate domain set. Otherwise, JavaScript calls are limit by the same-origin policy and requests will fail:
-`geth --rpc --rpcapi db,eth,net,web3,personal --rpccorsdomain "http://localhost:4200"`
+`geth --rpc --rpcapi db,eth,net,web3,personal,shh --shh --rpccorsdomain "http://localhost:4200"`
 
 If you don't want to use the default port (8545), you can change the default HTTP-RPC port with:
-`geth --rpc --rpcapi db,eth,net,web3,personal --rpccorsdomain "http://localhost:4200" --rpcport <portnumber>`
+`geth --rpc --rpcapi db,eth,net,web3,personal,shh --shh --rpccorsdomain "http://localhost:4200" --rpcport <portnumber>`
 
 For some specific functions, such as personal.unlockAccount, you need to tell the client that it has to expose the personal (or whatever api is appropriate) to the http RPC interface. To learn more about it, read [Management APIs](https://github.com/ethereum/go-ethereum/wiki/Management-APIs#enabling-the-management-apis).
 
