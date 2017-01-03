@@ -10,12 +10,7 @@ pipeline:
     image: plugins/slack
     channel: drone
     username: drone
-    template: |
-     {{ #success build.status }}
-       build {{ build.number }} succeeded ({{ build.link }}).  Good job.
-     {{ else }}
-       build {{ build.number }} failed ({{ build.link }}). Fix me please.
-     {{ /success }}
+    template: build {{ build.number }} finished with {{ build.status }} ({{ build.link }}, event: {{ build.event }}, duration: {{ since build.started }}).
 
 services:
   ipfs:
