@@ -15,8 +15,10 @@ services:
   ipfs:
    image: qnib/cp2017-ipfs
    container_name: ipfs
+   pull: true
   geth:
    image: cp2017/geth
+   pull: true
    container_name: geth
    environment:
     - GETH_TEST_DATABASE=true
