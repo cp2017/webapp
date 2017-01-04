@@ -18,6 +18,8 @@ services:
   geth:
    image: cp2017/geth
    container_name: geth
+   environment:
+    - GETH_TEST_DATABASE=true
 
 
 #  publish:
