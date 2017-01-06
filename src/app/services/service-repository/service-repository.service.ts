@@ -31,34 +31,25 @@ export class ServiceRepositoryService {
           .then(result => {
             console.log("Account unlocked");
 
-            // 1. Add swaggerfile to IPFS and get a hash for it (lets call it saggerHash)
-            this._ipfsService.putToIpfs(swaggerJson).then(ipfsSwaggerFile => {
-              let swaggerHash = ipfsSwaggerFile.hash;
-              console.log("Step 1 succeeded: IPFS swagger hash " + swaggerHash);
+            let microserviceObject: Microservice = new Microservice(name, description, "");
+            let metadataJson = JSON.stringify(microserviceObject);
 
-              // 2. Create a new Microservice(name, description, swaggerHash) entity and convert it to JSON
-              let microserviceObject: Microservice = new Microservice(name, description, swaggerHash);
-              let serviceJsonString = JSON.stringify(microserviceObject);
+            // 1. Add metadata and swagger description to IPFS
+            this._ipfsService.putServiceToIpfs(metadataJson, swaggerJson, name).then(ipfsFile => {
+              console.log("Step 1 succeeded: Service added to IPFS:");
+              console.log(ipfsFile);
+              let serviceHash = ipfsFile.Hash;
 
-              // 3. Put that JSON to IPFS and get a hash for the metadata --> serviceHash
-              this._ipfsService.putToIpfs(serviceJsonString).then(ipfsServiceFile => {
-                let serviceHash = ipfsServiceFile.hash;
-                console.log("Step 2 succeeded: IPFS service hash " + serviceHash);
+              // 2. Call the ethereum contract to register that service
+              let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+                .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
 
-                // 4. Call the ethereum contract to register that metadataHash
-                let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-                  .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-                
-                console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
-                console.log("Step 3 succeeded: Ethereum transaction id " + result);
+              // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
+              let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+              console.log("Step 2 succeeded: Ethereum transaction id " + result);
 
-                // 5. Done
-                resolve(serviceHash);
-
-              }).catch(err => {
-                reject(err);
-              });
+              // 3. Done
+              resolve(serviceHash);
             }).catch(err => {
               reject(err);
             });
@@ -90,8 +81,8 @@ export class ServiceRepositoryService {
         let servicesCount = serviceRegistery.servicesCount();
         let serviceHashList: string[] = [];
         for (let i = 1; i <= servicesCount; i++) {
-            serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
-            }
+          serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
+        }
         console.log('ServicesCount ' + servicesCount);
         console.log('serviceHashList ' + serviceHashList.length);
 
@@ -100,7 +91,7 @@ export class ServiceRepositoryService {
         //"Qmem6Dv6pVjXLXcw8gKUqWHycSo8r63gLyeMVBxeGxBbYd"];
 
         let microservices: Microservice[] = [];
-        for(let serviceHash of serviceHashList){
+        for (let serviceHash of serviceHashList) {
           this._ipfsService.getFromIpfs(serviceHash).then(ipfsServiceFile => {
             let serviceObj = JSON.parse(ipfsServiceFile);
             let mService: Microservice = new Microservice(serviceObj._name, serviceObj._description, serviceObj._hashToSwaggerFile);
@@ -142,11 +133,11 @@ export class ServiceRepositoryService {
   }
 
 
-  public getMicroserviceById(id: string): Microservice{
-    let service: Microservice[] = this.localServiceList.filter(function(currService){
+  public getMicroserviceById(id: string): Microservice {
+    let service: Microservice[] = this.localServiceList.filter(function (currService) {
       return currService.id == id;
     });
-    if(service.length > 1){
+    if (service.length > 1) {
       console.error("filter returned more than one service with identical id!");
       return null;
     }
