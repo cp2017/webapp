@@ -89,9 +89,11 @@ export class IpfsService {
   }
 
   /**
-   * Puts a string to IPFS and returns the IPFS file
-   * @param val The string value, that you want to put to IPFS
-   * @returns {Promise<T>} A promise, which resolves the IPFS file as soon as the string is put to IPFS
+   * Puts a new service to IPFS and republishes the services directory to IPNS. It returns the IPFS file for the new service
+   * @param metadata The service metadata as a json string
+   * @param swagger The service interface description as a json string
+   * @param name The name of the service
+   * @returns {Promise<T>} A promise, which resolves the IPFS file as soon as the service is put to IPFS
    */
   public putServiceToIpfs(metadata: string, swagger: string, name: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
@@ -100,28 +102,31 @@ export class IpfsService {
         this._node.files.mkdir('/services/' + name + '/', () => {
           // 2. Write the metadata and swagger files to the file system
           let options = {create: true, flush: true};
-          this._node.files.write('/services/' + name + '/swagger.json', new Buffer(swagger), options, (error, result) => {
-            // 3. Publish the changes of the file system to IPFS
-            this._node.files.stat('/services/', (servicesDirErr, servicesDirRes) => {
-              if (servicesDirErr || !servicesDirRes) {
-                reject(new Error("ipfs add error" + servicesDirErr + servicesDirRes));
-              } else {
-                // 4. Publish the new version of the services directory to IPNS
-                this._node.name.publish('/ipfs/' + servicesDirRes.Hash, (ipnsError, ipnsResult) => {
-                  if (ipnsError || !ipnsResult) {
-                    reject(new Error("ipns publish error" + ipnsError + ipnsResult));
-                  } else {
-                    // 5. Get the hash of the new service and use it to resolve the promise
-                    this._node.files.stat('/services/' + name + '/', (newServiceDirErr, newServiceDirRes) => {
-                      if (newServiceDirErr || !newServiceDirRes) {
-                        reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
-                      } else {
-                        resolve(newServiceDirRes);
-                      }
-                    });
-                  }
-                });
-              }
+          // At the moment we do not check the results of the write method because the current implementation of ipfs-js-api does not return anything
+          this._node.files.write('/services/' + name + '/swagger.json', new Buffer(swagger), options, () => {
+            this._node.files.write('/services/' + name + '/metadata.json', new Buffer(metadata), options, () => {
+              // 3. Publish the changes of the file system to IPFS
+              this._node.files.stat('/services/', (servicesDirErr, servicesDirRes) => {
+                if (servicesDirErr || !servicesDirRes) {
+                  reject(new Error("ipfs add error" + servicesDirErr + servicesDirRes));
+                } else {
+                  // 4. Publish the new version of the services directory to IPNS
+                  this._node.name.publish('/ipfs/' + servicesDirRes.Hash, (ipnsError, ipnsResult) => {
+                    if (ipnsError || !ipnsResult) {
+                      reject(new Error("ipns publish error" + ipnsError + ipnsResult));
+                    } else {
+                      // 5. Get the hash of the new service and use it to resolve the promise
+                      this._node.files.stat('/services/' + name + '/', (newServiceDirErr, newServiceDirRes) => {
+                        if (newServiceDirErr || !newServiceDirRes) {
+                          reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
+                        } else {
+                          resolve(newServiceDirRes);
+                        }
+                      });
+                    }
+                  });
+                }
+              });
             });
           });
         });
