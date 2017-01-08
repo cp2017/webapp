@@ -145,7 +145,7 @@ export class IpfsService {
   public getFromIpfs(hash: string): Promise<string> {
     let promise = new Promise((resolve, reject) => {
       // buffer: true results in the returned result being a buffer rather than a stream
-      this.node.cat(hash, function (err, res) {
+      this.node.cat(hash, (err, res) => {
         if (err || !res) {
           console.error('ipfs cat error', err, res);
           reject(err);
