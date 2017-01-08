@@ -1,9 +1,15 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {DebugElement} from '@angular/core';
 
-import { MyServicesComponent } from './my-services.component';
+import {MyServicesComponent} from './my-services.component';
+import {ServiceFilterPipe} from "../pipes/service-filter.pipe";
+import {RouterTestingModule} from "@angular/router/testing";
+import {ActivatedRoute} from "@angular/router";
+import {EthereumService} from "../services/ethereum/ethereum.service";
+import {IpfsService} from "../services/ipfs/ipfs.service";
+import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 
 describe('MyServicesComponent', () => {
   let component: MyServicesComponent;
@@ -11,9 +17,17 @@ describe('MyServicesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MyServicesComponent ]
+      imports: [
+        RouterTestingModule.withRoutes([
+          {
+            path: 'service-details/:service', component: DummyServiceDetails
+          }
+        ])
+      ],
+      declarations: [MyServicesComponent, ServiceFilterPipe],
+      providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -26,3 +40,15 @@ describe('MyServicesComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+/*
+ Dummy endpoint to receive routing from RouterTestingModule
+ */
+class DummyServiceDetails {
+  private sub: any;
+
+  constructor(private route: ActivatedRoute) {
+    this.sub = this.route.params.subscribe(params => {
+    });
+  }
+}
