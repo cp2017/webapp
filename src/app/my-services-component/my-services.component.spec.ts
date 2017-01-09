@@ -10,6 +10,8 @@ import {ActivatedRoute} from "@angular/router";
 import {EthereumService} from "../services/ethereum/ethereum.service";
 import {IpfsService} from "../services/ipfs/ipfs.service";
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
+import {ServiceDetailsComponent} from "../service-component/service-details-component/service-details.component";
+import {SafePipe} from "../pipes/safe-url.pipe";
 
 describe('MyServicesComponent', () => {
   let component: MyServicesComponent;
@@ -24,7 +26,7 @@ describe('MyServicesComponent', () => {
           }
         ])
       ],
-      declarations: [MyServicesComponent, ServiceFilterPipe],
+      declarations: [MyServicesComponent, ServiceDetailsComponent, ServiceFilterPipe, SafePipe],
       providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
       .compileComponents();

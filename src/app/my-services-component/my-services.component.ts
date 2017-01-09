@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 import {Microservice} from "../services/entities/microservice";
+declare var jQuery:any;
 
 @Component({
   selector: 'app-my-services',
@@ -11,8 +12,11 @@ export class MyServicesComponent implements OnInit {
 
   private myServices: Array<Microservice>;
   private subscribedServices: Array<Microservice>;
+  private editService: Microservice;
 
   constructor(private _serviceRepositoryService: ServiceRepositoryService, private ref: ChangeDetectorRef) {
+
+
   }
 
   ngOnInit() {
@@ -31,6 +35,14 @@ export class MyServicesComponent implements OnInit {
   private requestMyServicesError(err: any) {
     alert(err);
     console.log(err);
+  }
+
+  private editServiceModal(microservice: Microservice): void {
+    this.editService = microservice;
+  }
+
+  private cancleEdit():void {
+    this.editService = null;
   }
 
   /**

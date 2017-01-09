@@ -9,14 +9,13 @@ import {Microservice} from "../../services/entities/microservice";
 })
 export class ServiceDetailsComponent implements OnInit {
 
-  @Input('serviceHash') serviceHash: string;
+  @Input('service') service: Microservice;
   private _baseUrl: string = "http://petstore.swagger.io";
   private _swaggerUrl: string;
   private _url: string;
-  private _service: Microservice;
 
-  constructor(private _serviceRepositoryService: ServiceRepositoryService) {
-    this._service = new Microservice("", "", "");
+  constructor() {
+    this.service = new Microservice("", "", "");
     this._swaggerUrl = "http://your-url-here.com";
     this.buildUrl();
   }
@@ -26,22 +25,12 @@ export class ServiceDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.serviceHash);
-
-    if (!this.serviceHash) {
+    if (this.service == null) {
       return;
-    }
-    this._serviceRepositoryService.getServiceByIpfs(this.serviceHash).then(service => {
-      this._service = service;
-      this._swaggerUrl = "https://ipfs.io/ipfs/" + this._service.hashToSwaggerFile;
+    } else {
+      this._swaggerUrl = "https://ipfs.io/ipfs/" + this.service.hashToSwaggerFile;
       this.buildUrl();
-    }).catch(err => {
-      // TODO Do something with the error
-      console.log(err);
-    });
-    this._service = this._serviceRepositoryService.getMicroserviceById(this.serviceHash);
-
-
+    }
   }
 
   public get url(): string {
@@ -54,10 +43,6 @@ export class ServiceDetailsComponent implements OnInit {
 
   public get baseUrl(): string {
     return this._baseUrl;
-  }
-
-  public get service(): Microservice {
-    return this._service;
   }
 
 }
