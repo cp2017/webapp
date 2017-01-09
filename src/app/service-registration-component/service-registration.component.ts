@@ -42,7 +42,7 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
 
     this.newServiceHashAddress = serviceHash;
 
-    this._serviceRepositoryService.getService(serviceHash)
+    this._serviceRepositoryService.getServiceByIpfs(serviceHash)
       .then(service => this.getServiceSuccess(service))
       .catch(err => this.getServiceError(err));
   }

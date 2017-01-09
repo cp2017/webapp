@@ -92,15 +92,14 @@ export class ServiceRepositoryService {
 
         let microservices: Microservice[] = [];
         for (let serviceHash of serviceHashList) {
-          this._ipfsService.getFromIpfs(serviceHash).then(ipfsServiceFile => {
-            let serviceObj = JSON.parse(ipfsServiceFile);
-            let mService: Microservice = new Microservice(serviceObj._name, serviceObj._description, serviceObj._hashToSwaggerFile);
-            mService.id = serviceHash;
-            microservices.push(mService);
-            console.log(mService.id + ", " + serviceObj._name + ", " + serviceObj._description + ", " + serviceObj._hashToSwaggerFile);
-          }).catch(err => {
-            reject(err);
-          });
+          this.getServiceByIpfs(serviceHash)
+            .then((mService:Microservice) => {
+              microservices.push(mService);
+              console.log(mService);
+            })
+            .catch(microserviceErr => {
+              reject(microserviceErr);
+            });
         }
         this.localServiceList = microservices;
         resolve(microservices);
