@@ -1,7 +1,5 @@
-FROM node
+FROM cp2017/xvfb
 
-# Create app directory
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install ng
@@ -11,4 +9,4 @@ COPY package.json /usr/src/app/
 RUN npm install
 COPY . /usr/src/app/
 
-CMD ["ng", "server", "--host", "0.0.0.0", "--port", "4200"]
+CMD ["/usr/src/app/start.sh"]

@@ -1,30 +1,32 @@
-build:
-  image: node:$$NODE_VERSION
-  commands:
-    - npm install -g angular-cli
-    - npm install
-    - npm install enhanced-resolve
-
-#publish:
-#  docker:
-#    username: $$DOCKER_USER
-#    password: $$DOCKER_PASSWORD
-#    email: $$DOCKER_EMAIL
-#    repo: cp2017/webapp
-#    tag: latest
-#    file: Dockerfile
-#    insecure: false
-
-notify:
+pipeline:
+  build:
+    image: cp2017/xvfb
+    commands:
+      - npm install typescript
+      - npm install enhanced-resolve
+      - npm install
+      - ./test.sh
   slack:
-    webhook_url: https://hooks.slack.com/services/$$SLACK_TOKEN
+    image: plugins/slack
     channel: drone
     username: drone
-    template: >
-      {{ repo.full_name }} ({{ repo.repo_link }}) finished build #{{ build.number }} with status {{ build.status }}
-    when:
-      branch: master
 
-matrix:
-  NODE_VERSION:
-   - 7.2.1
+services:
+  ipfs:
+   image: qnib/cp2017-ipfs
+   container_name: ipfs
+   pull: true
+  geth:
+   image: cp2017/geth
+   pull: true
+   container_name: geth
+   environment:
+    - GETH_TEST_DATABASE=true
+
+
+#  publish:
+#    image: plugins/coverage
+#    server: http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080
+#    token: $$GITHUB_API_KEY
+#    includes: coverage/coverage.lcov
+

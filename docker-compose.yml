@@ -12,6 +12,8 @@ geth:
    net: host
 
 webapp:
-   image: qnib/cp2017-webapp
+   image: cp2017/webapp
    container_name: webapp
    net: host
+   command: /usr/src/app/test.sh
+   privileged: true
