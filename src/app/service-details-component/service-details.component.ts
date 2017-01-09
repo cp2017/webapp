@@ -18,16 +18,9 @@ export class ServiceDetailsComponent implements OnInit {
     private _service: Microservice;
 
   constructor(private route: ActivatedRoute, private _serviceRepositoryService: ServiceRepositoryService) {
-      this._service = new Microservice("","","");
-      this._swaggerUrl = "http://your-url-here.com";
-      this.buildUrl();
-  }
-
-  buildUrl(){
-      this._url = this._baseUrl + "?url=" + this._swaggerUrl;
-  }
-
-  ngOnInit() {
+    this._service = new Microservice("","","");
+    this._swaggerUrl = "http://your-url-here.com";
+    this.buildUrl();
     this._sub = this.route.params.subscribe(params => {
       console.log(params);
       let serviceId = params["hash"];
@@ -38,6 +31,13 @@ export class ServiceDetailsComponent implements OnInit {
       this._swaggerUrl = "https://ipfs.io/ipfs/" + this._service.hashToSwaggerFile;
       this.buildUrl();
     });
+  }
+
+  private buildUrl(){
+      this._url = this._baseUrl + "?url=" + this._swaggerUrl;
+  }
+
+  ngOnInit() {
   }
 
   public get url() : string {

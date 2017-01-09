@@ -24,11 +24,12 @@ export class SearchServiceComponent implements OnInit {
       this.buildUrl();
   }
 
-  buildUrl(){
+  private buildUrl(){
       this.url = this.baseUrl + "?url=" + this.swaggerUrl;
   }
 
   ngOnInit() {
+    
   }
 
 }
