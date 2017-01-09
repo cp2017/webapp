@@ -13,9 +13,10 @@ import {SafePipe} from './pipes/safe-url.pipe';
 import {ServiceFilterPipe} from './pipes/service-filter.pipe';
 import { ServiceCatalogueComponent } from './service-catalogue-component/service-catalogue.component';
 import { DashboardComponent } from './dashboard-component/dashboard.component';
-import {ServiceDetailsComponent} from "./service-details-component/service-details.component";
+import {ServiceComponent} from "./service-component/service.component";
 import { MyServicesComponent } from './my-services-component/my-services.component';
 import {ServiceRepositoryService} from "./services/service-repository/service-repository.service";
+import { ServiceDetailsComponent } from './service-component/service-details-component/service-details.component';
 
 
 const appRoutes: Routes = [
@@ -23,7 +24,7 @@ const appRoutes: Routes = [
   {path: 'system-status', component: SystemStatusComponent},
   {path: 'register', component: ServiceRegistrationComponent},
   {path: 'catalogue', component: ServiceCatalogueComponent},
-  {path: 'service-details/:hash', component: ServiceDetailsComponent},
+  {path: 'service-details/:hash', component: ServiceComponent},
   {path: 'my-services', component: MyServicesComponent},
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
@@ -33,12 +34,13 @@ const appRoutes: Routes = [
     AppComponent,
     ServiceRegistrationComponent,
     SystemStatusComponent,
-    ServiceDetailsComponent,
+    ServiceComponent,
     SafePipe,
     ServiceFilterPipe,
     ServiceCatalogueComponent,
     DashboardComponent,
-    MyServicesComponent
+    MyServicesComponent,
+    ServiceDetailsComponent
   ],
   imports: [
     BrowserModule,

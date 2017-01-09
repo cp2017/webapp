@@ -5,29 +5,30 @@ import { DebugElement } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { ServiceDetailsComponent } from './service-details.component';
+import { ServiceComponent } from './service.component';
 import { SafePipe } from "../pipes/safe-url.pipe";
 import { ServiceRepositoryService } from '../services/service-repository/service-repository.service';
 import {EthereumService} from "../services/ethereum/ethereum.service";
 import {IpfsService} from "../services/ipfs/ipfs.service";
+import {ServiceDetailsComponent} from "./service-details-component/service-details.component";
 
-describe('ServiceDetailsComponent', () => {
-  let component: ServiceDetailsComponent;
-  let fixture: ComponentFixture<ServiceDetailsComponent>;
+describe('ServiceComponent', () => {
+  let component: ServiceComponent;
+  let fixture: ComponentFixture<ServiceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule
       ],
-      declarations: [ ServiceDetailsComponent, SafePipe],
+      declarations: [ ServiceComponent, ServiceDetailsComponent, SafePipe],
       providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ServiceDetailsComponent);
+    fixture = TestBed.createComponent(ServiceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -35,9 +36,4 @@ describe('ServiceDetailsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should set the initial url', () =>{
-    expect(component.url).toContain(component.baseUrl);
-    expect(component.url).toContain(component.swaggerUrl);
-  }); 
 });

@@ -32,7 +32,26 @@ export class IpfsService {
           .then((id) => {
             console.log('My IPFS node id is: ', id.id);
             this._node = node;
-            resolve(node);
+            // create services dir if not already existing
+            this._node.files.ls('/', (fileSystemError, fileSystemRes) => {
+              if (fileSystemError || !fileSystemRes) {
+                reject(new Error("ipfs file system error" + fileSystemError + fileSystemRes));
+              } else {
+                let servicesDirExists = false;
+                if (fileSystemRes.Entries != undefined) {
+                  for (let directory of fileSystemRes.Entries) {
+                    if (directory.Name == 'services') {
+                      servicesDirExists = true;
+                    }
+                  }
+                }
+                if (!servicesDirExists) {
+                  this._node.files.mkdir('/services/', () => {
+                  });
+                }
+                resolve(node);
+              }
+            });
           })
           .catch((err) => {
             console.log('Connect Ipfs Daemon failed: ' + err.message);
@@ -72,6 +91,55 @@ export class IpfsService {
   }
 
   /**
+   * Puts a new service to IPFS and republishes the services directory to IPNS. It returns the IPFS file for the new service
+   * @param metadata The service metadata as a json string
+   * @param swagger The service interface description as a json string
+   * @param name The name of the service
+   * @returns {Promise<T>} A promise, which resolves the IPFS file as soon as the service is put to IPFS
+   */
+  public putServiceToIpfs(metadata: string, swagger: string, name: string): Promise<any> {
+    let promise = new Promise((resolve, reject) => {
+      if (this._node != null) {
+        // 1. Create the directory in the file system
+        this._node.files.mkdir('/services/' + name + '/', () => {
+          // 2. Write the metadata and swagger files to the file system
+          let options = {create: true, flush: true};
+          // At the moment we do not check the results of the write method because the current implementation of ipfs-js-api does not return anything
+          this._node.files.write('/services/' + name + '/swagger.json', new Buffer(swagger), options, () => {
+            this._node.files.write('/services/' + name + '/metadata.json', new Buffer(metadata), options, () => {
+              // 3. Publish the changes of the file system to IPFS
+              this._node.files.stat('/services/', (servicesDirErr, servicesDirRes) => {
+                if (servicesDirErr || !servicesDirRes) {
+                  reject(new Error("ipfs add error" + servicesDirErr + servicesDirRes));
+                } else {
+                  // 4. Publish the new version of the services directory to IPNS
+                  this._node.name.publish('/ipfs/' + servicesDirRes.Hash, (ipnsError, ipnsResult) => {
+                    if (ipnsError || !ipnsResult) {
+                      reject(new Error("ipns publish error" + ipnsError + ipnsResult));
+                    } else {
+                      // 5. Get the hash of the new service and use it to resolve the promise
+                      this._node.files.stat('/services/' + name + '/', (newServiceDirErr, newServiceDirRes) => {
+                        if (newServiceDirErr || !newServiceDirRes) {
+                          reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
+                        } else {
+                          resolve(newServiceDirRes);
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            });
+          });
+        });
+      } else {
+        reject(new Error("You have to connect to an IPFS deamon first!"));
+      }
+    });
+    return promise;
+  }
+
+  /**
    * Gets an IPFS file as string for a given hash
    * @param hash The hash which is the address for your file
    * @returns {Promise<T>} A promise that resolves the file as a string as soon as we got it from IPFS
@@ -79,7 +147,7 @@ export class IpfsService {
   public getFromIpfs(hash: string): Promise<string> {
     let promise = new Promise((resolve, reject) => {
       // buffer: true results in the returned result being a buffer rather than a stream
-      this.node.cat(hash, function (err, res) {
+      this.node.cat(hash, (err, res) => {
         if (err || !res) {
           console.error('ipfs cat error', err, res);
           reject(err);
