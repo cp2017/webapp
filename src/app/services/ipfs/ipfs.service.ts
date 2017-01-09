@@ -38,9 +38,11 @@ export class IpfsService {
                 reject(new Error("ipfs file system error" + fileSystemError + fileSystemRes));
               } else {
                 let servicesDirExists = false;
-                for (let directory of fileSystemRes.Entries) {
-                  if (directory.Name == 'services') {
-                    servicesDirExists = true;
+                if (fileSystemRes.Entries != undefined) {
+                  for (let directory of fileSystemRes.Entries) {
+                    if (directory.Name == 'services') {
+                      servicesDirExists = true;
+                    }
                   }
                 }
                 if (!servicesDirExists) {
