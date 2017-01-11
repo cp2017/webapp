@@ -11,8 +11,8 @@ import {Microservice} from "../services/entities/microservice";
 })
 export class ServiceComponent implements OnInit {
 
-  private serviceHash: string;
-  private service: Microservice;
+  private _serviceHash: string = null;
+  private _service: Microservice = null;
 
   constructor(private route: ActivatedRoute, private _serviceRepositoryService: ServiceRepositoryService) {
   }
@@ -23,14 +23,22 @@ export class ServiceComponent implements OnInit {
       if (!serviceId) {
         return;
       } else {
-        this.serviceHash = serviceId;
-        this._serviceRepositoryService.getServiceByIpfs(this.serviceHash).then(service => {
-          this.service = service;
+        this._serviceHash = serviceId;
+        this._serviceRepositoryService.getServiceByIpfs(this._serviceHash).then(service => {
+          this._service = service;
         }).catch(err => {
           // TODO Do something with the error
           console.log(err);
         });
       }
     });
+  }
+
+  get serviceHash(): string {
+    return this._serviceHash;
+  }
+
+  get service(): Microservice {
+    return this._service;
   }
 }
