@@ -30,6 +30,14 @@
         </div>
         <div class="row">
           <div class="form-group col-xs-12">
+            <label for="service_public_key">Service public key</label>
+            <textarea id="service_public_key" class="form-control" name="service_public_key"
+                      [(ngModel)]="servicePublicKey"
+                      placeholder="Public key of the service (used to encrypt the messages)" required></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-xs-12">
             <label for="swaggerJson">Select a JSON file from your local file system with the swagger description in it
               (*.json).</label>
             <input id="swaggerJson" class="form-control" name="swagger-json"

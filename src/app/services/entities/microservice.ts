@@ -6,6 +6,7 @@ export class Microservice {
   private _description: string;
   private _hashToSwaggerFile: string;
   private _IPNS_URI: string;
+  private _publicKey:string;
   private _IPFS_VERSION_HISTORY: Array<string>;
   private _ipfsPreviousVersions: Array<Microservice>;
 
@@ -57,5 +58,21 @@ export class Microservice {
 
   set IPFS_VERSION_HISTORY(value: Array<string>) {
     this._IPFS_VERSION_HISTORY = value;
+  }
+
+  get publicKey(): string {
+    return this._publicKey;
+  }
+
+  set publicKey(value: string) {
+    this._publicKey = value;
+  }
+
+  get ipfsPreviousVersions(): Array<Microservice> {
+    return this._ipfsPreviousVersions;
+  }
+
+  set ipfsPreviousVersions(value: Array<Microservice>) {
+    this._ipfsPreviousVersions = value;
   }
 }
