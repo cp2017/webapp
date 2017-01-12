@@ -22,7 +22,7 @@ export class ServiceRepositoryService {
    * @returns {Promise<T>} Returns a promise that resolves the service hash as soon as all the steps
    * are done and the service is registered.
    */
-  registerService(name: string, description: string, swaggerJson: string, publicKey:string, price:number = 0): Promise<any> {
+  registerService(name: string, description: string, swaggerJson: string, publicKey: string, price: number = 0): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -41,16 +41,26 @@ export class ServiceRepositoryService {
               console.log(ipfsFile);
               let serviceHash = ipfsFile.Hash;
 
-              // 2. Call the ethereum contract to register that service
-              let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-                .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+              // 2. Deploy Service contract
+              this._ethereumService.deployContract(ContractProviderService.SERVICE_CONTRACT_ABI, ContractProviderService.SERVICE_CONTRACT_BINARY)
+                .then(contractAddress => {
+                  console.log("Step 3 succeeded: New contract for the service deployed " + contractAddress);
+                  // TODO store contractAddress somewhere
 
-              // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-              let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
-              console.log("Step 2 succeeded: Ethereum transaction id " + result);
+                  // 3. Call the ethereum contract to register that service
+                  let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+                    .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
 
-              // 3. Done
-              resolve(serviceHash);
+                  // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
+                  let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+                  console.log("Step 3 succeeded: Ethereum transaction id " + result);
+
+                  // 4. Done
+                  resolve(serviceHash);
+
+                }).then(err => {
+                reject(err);
+              });
             }).catch(err => {
               reject(err);
             });
@@ -73,7 +83,7 @@ export class ServiceRepositoryService {
    * @param price
    * @returns {Promise<T>}
    */
-  updateService(name: string, description: string, swaggerJson: string, price:number = 0): Promise<any> {
+  updateService(name: string, description: string, swaggerJson: string, price: number = 0): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
         // 0. Unlock the default ethereum account by calling the unlockAccount function of the ethereum service
@@ -100,7 +110,7 @@ export class ServiceRepositoryService {
   }
 
 
-    /**
+  /**
    * Returns all services that are registered at the marketplace
    * TODO
    * @returns {Promise<T>}
@@ -129,7 +139,7 @@ export class ServiceRepositoryService {
         let microservices: Microservice[] = [];
         for (let serviceHash of serviceHashList) {
           this.getServiceByIpfs(serviceHash)
-            .then((mService:Microservice) => {
+            .then((mService: Microservice) => {
               microservices.push(mService);
               console.log(mService);
             })
