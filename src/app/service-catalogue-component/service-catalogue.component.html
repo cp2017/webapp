@@ -12,10 +12,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let service of services | serviceFilter:searchText.value">
+        <tr *ngFor="let service of services | serviceFilter:searchText.value" [routerLink]="['/service-details', service.id]">
           <td>{{service.name}}</td>
           <td>{{service.description}}</td>
-          <td><a *ngIf="service.hashToSwaggerFile" [routerLink]="['/service-details', service.id]">Show details</a></td>
+          <td><a [routerLink]="['/consume-service', service.id]" >Consume service</a></td>
         </tr>
         </tbody>
       </table>
