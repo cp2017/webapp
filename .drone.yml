@@ -17,7 +17,7 @@ services:
    container_name: ipfs
    pull: true
   geth:
-   image: cp2017/geth
+   image: cp2017/geth:2017-01-12
    pull: true
    container_name: geth
    environment:
