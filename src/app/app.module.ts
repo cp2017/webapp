@@ -19,6 +19,7 @@ import {ServiceRepositoryService} from "./services/service-repository/service-re
 import { ServiceDetailsComponent } from './service-component/service-details-component/service-details.component';
 import {SpinnerComponent} from "./directives/spinner/spinner.component";
 import { SubscribeServiceComponentComponent } from './subscribe-service-component/subscribe-service-component.component';
+import {ConsumeMicroservicesServiceService} from "./services/consume-microservices/consume-microservices.service";
 
 
 const appRoutes: Routes = [
@@ -27,6 +28,7 @@ const appRoutes: Routes = [
   {path: 'register', component: ServiceRegistrationComponent},
   {path: 'catalogue', component: ServiceCatalogueComponent},
   {path: 'service-details/:hash', component: ServiceComponent},
+  {path: 'consume-service/:hash', component: SubscribeServiceComponentComponent},
   {path: 'my-services', component: MyServicesComponent},
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
@@ -52,7 +54,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [IpfsService, EthereumService, ServiceRepositoryService],
+  providers: [IpfsService, EthereumService, ServiceRepositoryService, ConsumeMicroservicesServiceService],
   bootstrap: [AppComponent]
 })
 

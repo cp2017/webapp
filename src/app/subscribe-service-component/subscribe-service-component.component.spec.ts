@@ -1,9 +1,18 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {DebugElement} from '@angular/core';
 
-import { SubscribeServiceComponentComponent } from './subscribe-service-component.component';
+import {SubscribeServiceComponentComponent} from './subscribe-service-component.component';
+import {SpinnerComponent} from "../directives/spinner/spinner.component";
+import {ConsumeMicroservicesServiceService} from "../services/consume-microservices/consume-microservices.service";
+import {IpfsService} from "../services/ipfs/ipfs.service";
+import {EthereumService} from "../services/ethereum/ethereum.service";
+import {FormsModule} from "@angular/forms";
+import {ActivatedRoute} from "@angular/router";
+import {RouterTestingModule} from "@angular/router/testing";
+import {MockActivatedRoute} from "../services/mocks/mock-activated-route.service";
+import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 
 describe('SubscribeServiceComponentComponent', () => {
   let component: SubscribeServiceComponentComponent;
@@ -11,9 +20,20 @@ describe('SubscribeServiceComponentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SubscribeServiceComponentComponent ]
+      imports: [
+        RouterTestingModule, FormsModule
+      ],
+      declarations: [SubscribeServiceComponentComponent, SpinnerComponent],
+      providers: [
+        ServiceRepositoryService,
+        ConsumeMicroservicesServiceService,
+        IpfsService,
+        EthereumService,
+        {
+          provide: ActivatedRoute, useClass: MockActivatedRoute
+        }],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

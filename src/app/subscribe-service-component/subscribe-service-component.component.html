@@ -1,3 +1,27 @@
-<p>
-  subscribe-service-component works!
-</p>
+<spinner id="app-list-spinner" [active]="loading"></spinner>
+
+<h1>Subscribe to microservice</h1>
+<h2 *ngIf="service != null">Service: {{service.name}}</h2>
+<div class="row">
+  <div *ngIf="newServiceHashAddress == undefined" class="col-xs-12 gutter">
+    <div class="register-service content-box">
+      <form (ngSubmit)="consumeService()">
+        <div class="row">
+          <div class="form-group col-xs-12">
+            <label for="consumer_public_key">Consumer public key</label>
+            <input id="consumer_public_key" class="form-control" name="consumer_public_key"
+                      [(ngModel)]="consumerPublicKey"
+                      placeholder="Public key of the consumer (used so sign the message)" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-xs-12">
+            <button class="btn btn-lg btn-primary btn-block submit-btn" type="submit">
+              Consume microservice
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
