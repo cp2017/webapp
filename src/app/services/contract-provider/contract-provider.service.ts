@@ -243,6 +243,31 @@ export class ContractProviderService {
     "type": "function"
   }, {"inputs": [], "type": "constructor", "payable": true}];
 
+  private static _USER_REGISTRY_CONTRACT_ADDRESS = "0xb50856af1f3fc6d2c97ac7bc6642f3662feb398b";
+  private static _USER_REGISTRY_CONTRACT_ABI = [{
+    "constant": true,
+    "inputs": [{"name": "", "type": "address"}],
+    "name": "userContracts",
+    "outputs": [{"name": "", "type": "address"}],
+    "payable": false,
+    "type": "function"
+  }, {
+    "constant": false,
+    "inputs": [{"name": "userContractAdd", "type": "address"}],
+    "name": "setUserContractAddress",
+    "outputs": [],
+    "payable": false,
+    "type": "function"
+  }, {"inputs": [], "type": "constructor", "payable": true}];
+
+
+  static get USER_REGISTRY_CONTRACT_ADDRESS(): string {
+    return this._USER_REGISTRY_CONTRACT_ADDRESS;
+  }
+
+  static get USER_REGISTRY_CONTRACT_ABI() {
+    return this._USER_REGISTRY_CONTRACT_ABI;
+  }
 
   static get SERVICE_CONTRACT_BINARY() {
     return this._SERVICE_CONTRACT_BINARY;
