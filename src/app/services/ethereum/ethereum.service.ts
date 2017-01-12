@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {ContractProviderService} from "../contract-provider/contract-provider.service";
 declare var Web3: any;
 
 @Injectable()
@@ -31,12 +32,34 @@ export class EthereumService {
         this._web3 = new Web3(httpProvider);
         this._web3.eth.defaultAccount = this._web3.eth.accounts[0];
         this._accountPassword = accountPassword;
+        // TODO only deploy contractAddress if the user does not already have one
+        this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
+          console.log(contractAddress);
+          // TODO store contractAddress somewhere
+        }).then(err => {
+          console.log(err);
+        });
         resolve(this._web3);
       } else {
         resolve(this._web3);
       }
     });
     return promise;
+  }
+
+  deployContract(contractAbi, compiledContract): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 5000000}, (err, contract) => {
+        if (err) {
+          reject(err);
+          return;
+          // callback fires twice, we only want the second call when the contract is deployed
+        } else if (contract.address) {
+          let myContract = contract;
+          resolve(myContract.address);
+        }
+      });
+    });
   }
 
   /**
@@ -84,6 +107,7 @@ export class EthereumService {
         // create contract
         console.log("Contract status: " + "transaction sent, waiting for confirmation");
         this._web3.eth.contract(abi).new({data: code}, (err, contract) => {
+          console.log(code);
           if (err) {
             reject(err);
             return;

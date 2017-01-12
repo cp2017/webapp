@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Microservice} from "../entities/microservice";
 import {IpfsService} from "../ipfs/ipfs.service";
 import {EthereumService} from "../ethereum/ethereum.service";
 import {ServiceSubscription} from "../entities/serviceSubscription";
+import {ContractProviderService} from "../contract-provider/contract-provider.service";
 
 @Injectable()
 export class ConsumeMicroservicesServiceService {
@@ -13,7 +14,7 @@ export class ConsumeMicroservicesServiceService {
   }
 
 
-  consumeService(microservice:Microservice, consumerPublicKey:string): Promise<ServiceSubscription> {
+  consumeService(microservice: Microservice, consumerPublicKey: string): Promise<ServiceSubscription> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -21,7 +22,7 @@ export class ConsumeMicroservicesServiceService {
         this._ethereumService.unlockDefaultAccount()
           .then(result => {
             console.log("Account unlocked");
-            // TODO do the subscription
+            // TODO do the subscription: call the corresponding service contract
 
           })
           .catch(err => {
