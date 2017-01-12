@@ -22,7 +22,7 @@ export class ServiceRepositoryService {
    * @returns {Promise<T>} Returns a promise that resolves the service hash as soon as all the steps
    * are done and the service is registered.
    */
-  registerService(name: string, description: string, swaggerJson: string): Promise<any> {
+  registerService(name: string, description: string, swaggerJson: string, price:number = 0): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -31,11 +31,11 @@ export class ServiceRepositoryService {
           .then(result => {
             console.log("Account unlocked");
 
-            let microserviceObject: Microservice = new Microservice(name, description, "");
-            let metadataJson = JSON.stringify(microserviceObject);
+            let microserviceObject: Microservice = new Microservice(name, description);
+            microserviceObject.price = price;
 
             // 1. Add metadata and swagger description to IPFS
-            this._ipfsService.putServiceToIpfs(metadataJson, swaggerJson, name).then(ipfsFile => {
+            this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
               console.log("Step 1 succeeded: Service added to IPFS:");
               console.log(ipfsFile);
               let serviceHash = ipfsFile.Hash;
@@ -65,6 +65,41 @@ export class ServiceRepositoryService {
   }
 
   /**
+   * TODO: Implement a service that provides the functionality to updata a specific microservice
+   * @param name
+   * @param description
+   * @param swaggerJson
+   * @param price
+   * @returns {Promise<T>}
+   */
+  updateService(name: string, description: string, swaggerJson: string, price:number = 0): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
+        // 0. Unlock the default ethereum account by calling the unlockAccount function of the ethereum service
+        this._ethereumService.unlockDefaultAccount()
+          .then(result => {
+            console.log("Account unlocked");
+            // 1. Get the current version of the service
+            // TODO
+            // 2. Replace the service in the IPFS file system and publish it
+            // TODO
+            // 3. Call the ethereum contract to update that service in the blockchain
+            // TODO
+            // 4. Resolve
+            // TODO
+          })
+          .catch(err => {
+            console.error("Account unlock error: " + err);
+            reject("Account unlock error: " + err);
+          });
+      } else {
+        reject(new Error("You have to connect to the IPFS and Ethereum networks first!"));
+      }
+    });
+  }
+
+
+    /**
    * Returns all services that are registered at the marketplace
    * TODO
    * @returns {Promise<T>}
@@ -159,6 +194,7 @@ export class ServiceRepositoryService {
                         .then(metadataRes => {
                           let serviceObj = JSON.parse(metadataRes);
                           mService = new Microservice(serviceObj._name, serviceObj._description, swaggerHashRes.Hash);
+                          mService.IPNS_URI = serviceObj._IPNS_URI;
                           mService.id = hash;
                           resolve(mService);
                         })

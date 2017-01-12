@@ -17,6 +17,7 @@ import {ServiceComponent} from "./service-component/service.component";
 import { MyServicesComponent } from './my-services-component/my-services.component';
 import {ServiceRepositoryService} from "./services/service-repository/service-repository.service";
 import { ServiceDetailsComponent } from './service-component/service-details-component/service-details.component';
+import {SpinnerComponent} from "./directives/spinner/spinner.component";
 
 
 const appRoutes: Routes = [
@@ -40,7 +41,8 @@ const appRoutes: Routes = [
     ServiceCatalogueComponent,
     DashboardComponent,
     MyServicesComponent,
-    ServiceDetailsComponent
+    ServiceDetailsComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,

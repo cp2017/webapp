@@ -15,6 +15,9 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
   private name: string;
   private description: string;
   private swaggerJson: string;
+  private price:number;
+  private service:Microservice;
+  private loading:boolean = false;
 
   constructor(private _serviceRepositoryService: ServiceRepositoryService) {
   }
@@ -28,7 +31,8 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
   }
 
   private registerNewService() {
-    this._serviceRepositoryService.registerService(this.name, this.description, this.swaggerJson)
+    this.loading = true;
+    this._serviceRepositoryService.registerService(this.name, this.description, this.swaggerJson, this.price)
       .then(serviceHash => this.registrationSuccess(serviceHash))
       .catch(err => this.registrationError(err));
   }
@@ -52,16 +56,19 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
     // TODO display the error on the UI
     console.log(err);
     alert(err);
+    this.loading = false;
   }
 
   private getServiceSuccess(service: Microservice) {
-    // TODO
+    this.service = service;
     console.log(service);
+    this.loading = false;
   }
 
   private getServiceError(err) {
     // TODO display the error on the UI
     console.log(err);
+    this.loading = false;
   }
 
   /*
