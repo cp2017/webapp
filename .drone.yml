@@ -1,4 +1,9 @@
 pipeline:
+  check:
+    image: cp2017/geth:2017-01-12.1
+    commands:
+      - sleep 5
+      - geth --exec 'eth.accounts' attach http://localhost:8545
   build:
     image: cp2017/xvfb
     commands:
