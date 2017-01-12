@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import multihash from "multi-hash";
 import {ContractProviderService} from "../contract-provider/contract-provider.service";
 declare var Web3: any;
 
@@ -11,6 +12,8 @@ export class EthereumService {
   private _accountPassword: string = null;
   // A test contract (if deployed)
   private testContract: any;
+  // User contract address
+  private userContractAddress: string;
 
   constructor() {
   }
@@ -32,13 +35,29 @@ export class EthereumService {
         this._web3 = new Web3(httpProvider);
         this._web3.eth.defaultAccount = this._web3.eth.accounts[0];
         this._accountPassword = accountPassword;
-        // TODO only deploy contractAddress if the user does not already have one
-        this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
-          console.log(contractAddress);
-          // TODO store contractAddress somewhere
-        }).then(err => {
-          console.log(err);
+
+        this.unlockDefaultAccount().then(unlockResult => {
+          // Get user registration contract
+          let userRegistrationContract = this.web3.eth.contract(ContractProviderService.USER_REGISTRY_CONTRACT_ABI)
+            .at(ContractProviderService.USER_REGISTRY_CONTRACT_ADDRESS);
+          console.log(userRegistrationContract);
+          this.userContractAddress = userRegistrationContract.userContracts(this._web3.eth.defaultAccount);
+          // Only deploy contractAddress if the user does not already have one
+          if (this.userContractAddress == "0x") {
+            this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
+              let result = userRegistrationContract.setUserContractAddress(contractAddress);
+              this.userContractAddress = contractAddress;
+              console.log("New user contract address: " + this.userContractAddress);
+            }).catch(err => {
+              console.log(err);
+            });
+          } else {
+            console.log("Old user contract address: " + this.userContractAddress);
+          }
+        }).catch(unlockErr => {
+          console.log(unlockErr);
         });
+
         resolve(this._web3);
       } else {
         resolve(this._web3);
