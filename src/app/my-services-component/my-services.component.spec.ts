@@ -12,6 +12,7 @@ import {IpfsService} from "../services/ipfs/ipfs.service";
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 import {ServiceDetailsComponent} from "../service-component/service-details-component/service-details.component";
 import {SafePipe} from "../pipes/safe-url.pipe";
+import {SpinnerComponent} from "../directives/spinner/spinner.component";
 
 describe('MyServicesComponent', () => {
   let component: MyServicesComponent;
@@ -26,7 +27,7 @@ describe('MyServicesComponent', () => {
           }
         ])
       ],
-      declarations: [MyServicesComponent, ServiceDetailsComponent, ServiceFilterPipe, SafePipe],
+      declarations: [MyServicesComponent, ServiceDetailsComponent, ServiceFilterPipe, SafePipe, SpinnerComponent],
       providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
       .compileComponents();

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as concat from 'concat-stream';
+import {Microservice} from "../entities/microservice";
 declare var IpfsApi: any;
 
 @Injectable()
@@ -7,6 +8,7 @@ export class IpfsService {
 
   // The connection to the IPFS daemon
   private _node: any = null;
+  private _nodeId: number;
 
   constructor() {
   }
@@ -20,7 +22,7 @@ export class IpfsService {
    * we return the already initialized connection.
    * @returns {Promise<TResult>|Promise<U>} A promise that resolves as soon as we are connected to IPFS
    */
-  public connectIpfsDeamon(multiaddr: string): Promise<any> {
+  public connectIpfsDeamon(multiaddr: string = "/ip4/127.0.0.1/tcp/5001"): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.node == null) {
         // Create the IPFS node instance
@@ -31,6 +33,7 @@ export class IpfsService {
         node.id()
           .then((id) => {
             console.log('My IPFS node id is: ', id.id);
+            this._nodeId = id.id;
             this._node = node;
             // create services dir if not already existing
             this._node.files.ls('/', (fileSystemError, fileSystemRes) => {
@@ -97,16 +100,18 @@ export class IpfsService {
    * @param name The name of the service
    * @returns {Promise<T>} A promise, which resolves the IPFS file as soon as the service is put to IPFS
    */
-  public putServiceToIpfs(metadata: string, swagger: string, name: string): Promise<any> {
+  public putServiceToIpfs(microservice: Microservice, swagger: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._node != null) {
         // 1. Create the directory in the file system
-        this._node.files.mkdir('/services/' + name + '/', () => {
+        this._node.files.mkdir('/services/' + microservice.name + '/', () => {
           // 2. Write the metadata and swagger files to the file system
           let options = {create: true, flush: true};
           // At the moment we do not check the results of the write method because the current implementation of ipfs-js-api does not return anything
-          this._node.files.write('/services/' + name + '/swagger.json', new Buffer(swagger), options, () => {
-            this._node.files.write('/services/' + name + '/metadata.json', new Buffer(metadata), options, () => {
+          this._node.files.write('/services/' + microservice.name + '/swagger.json', new Buffer(swagger), options, () => {
+            microservice.IPNS_URI = encodeURI("https://ipfs.io/ipns/" + this._nodeId + "/" + microservice.name);
+            let metadataJson = JSON.stringify(microservice);
+            this._node.files.write('/services/' + microservice.name + '/metadata.json', new Buffer(metadataJson), options, () => {
               // 3. Publish the changes of the file system to IPFS
               this._node.files.stat('/services/', (servicesDirErr, servicesDirRes) => {
                 if (servicesDirErr || !servicesDirRes) {
@@ -118,7 +123,7 @@ export class IpfsService {
                       reject(new Error("ipns publish error" + ipnsError + ipnsResult));
                     } else {
                       // 5. Get the hash of the new service and use it to resolve the promise
-                      this._node.files.stat('/services/' + name + '/', (newServiceDirErr, newServiceDirRes) => {
+                      this._node.files.stat('/services/' + microservice.name + '/', (newServiceDirErr, newServiceDirRes) => {
                         if (newServiceDirErr || !newServiceDirRes) {
                           reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
                         } else {

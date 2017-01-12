@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 import {Microservice} from "../services/entities/microservice";
-declare var jQuery:any;
+declare var jQuery: any;
 
 @Component({
   selector: 'app-my-services',
@@ -13,6 +13,8 @@ export class MyServicesComponent implements OnInit {
   private myServices: Array<Microservice>;
   private subscribedServices: Array<Microservice>;
   private editService: Microservice;
+  private loading: boolean = false;
+
 
   constructor(private _serviceRepositoryService: ServiceRepositoryService, private ref: ChangeDetectorRef) {
 
@@ -20,6 +22,7 @@ export class MyServicesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loading = true;
     this.setUpLocalChangeDetector();
     this._serviceRepositoryService.getAllMyServicesByIpns()
       .then(services => this.requestMyServicesSuccess(services))
@@ -30,21 +33,26 @@ export class MyServicesComponent implements OnInit {
     console.log("My services:");
     console.log(services);
     this.myServices = services;
+    this.loading = false;
   }
 
   private requestMyServicesError(err: any) {
     alert(err);
     console.log(err);
+    this.loading = false;
   }
 
   private editServiceModal(microservice: Microservice): void {
     this.editService = microservice;
   }
 
-  private cancleEdit():void {
+  private cancleEdit(): void {
     this.editService = null;
   }
 
+  /*
+   *************** Helper *******************
+   */
   /**
    * Manually extend the component's change detector and doing a local check every 500 milliseconds.
    */

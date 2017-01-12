@@ -1,13 +1,23 @@
+<spinner id="app-list-spinner" [active]="loading"></spinner>
+
 <h1>Register new microservice</h1>
 <div class="row">
   <div *ngIf="newServiceHashAddress == undefined" class="col-xs-12 gutter">
     <div class="register-service content-box">
       <form (ngSubmit)="registerNewService()">
         <div class="row">
-          <div class="form-group col-xs-12">
+          <div class="form-group col-xs-6">
             <label for="service-name">Service name</label>
             <input id="service-name" class="form-control" name="service-name"
                    type="text" [(ngModel)]="name" placeholder="name" required>
+          </div>
+          <div class="form-group col-xs-6">
+            <label for="service-price">Amount (in Ether)</label>
+            <div class="input-group">
+              <input id="service-price" class="form-control" name="service-price"
+                     type="number" step="0.0001" [(ngModel)]="price" placeholder="0.00" required>
+              <div class="input-group-addon">ETH</div>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -42,6 +52,7 @@
     <div class="register-service-result content-box">
       <h3>The new service was successfully registered:</h3>  
       <div>{{"Service hash: " + newServiceHashAddress}}</div>
+      <service-details *ngIf="service != null" [service]="service"></service-details>
     </div>
   </div>
 </div>
