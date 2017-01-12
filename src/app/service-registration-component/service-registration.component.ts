@@ -16,6 +16,7 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
   private description: string;
   private swaggerJson: string;
   private price:number;
+  private servicePublicKey: string;
   private service:Microservice;
   private loading:boolean = false;
 
@@ -32,7 +33,7 @@ export class ServiceRegistrationComponent implements OnInit, AfterViewInit{
 
   private registerNewService() {
     this.loading = true;
-    this._serviceRepositoryService.registerService(this.name, this.description, this.swaggerJson, this.price)
+    this._serviceRepositoryService.registerService(this.name, this.description, this.swaggerJson, this.servicePublicKey, this.price)
       .then(serviceHash => this.registrationSuccess(serviceHash))
       .catch(err => this.registrationError(err));
   }

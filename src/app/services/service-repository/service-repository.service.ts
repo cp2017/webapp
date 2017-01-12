@@ -22,7 +22,7 @@ export class ServiceRepositoryService {
    * @returns {Promise<T>} Returns a promise that resolves the service hash as soon as all the steps
    * are done and the service is registered.
    */
-  registerService(name: string, description: string, swaggerJson: string, price:number = 0): Promise<any> {
+  registerService(name: string, description: string, swaggerJson: string, publicKey:string, price:number = 0): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -32,6 +32,7 @@ export class ServiceRepositoryService {
             console.log("Account unlocked");
 
             let microserviceObject: Microservice = new Microservice(name, description);
+            microserviceObject.publicKey = publicKey;
             microserviceObject.price = price;
 
             // 1. Add metadata and swagger description to IPFS
@@ -195,6 +196,7 @@ export class ServiceRepositoryService {
                           let serviceObj = JSON.parse(metadataRes);
                           mService = new Microservice(serviceObj._name, serviceObj._description, swaggerHashRes.Hash);
                           mService.IPNS_URI = serviceObj._IPNS_URI;
+                          mService.publicKey = serviceObj._publicKey;
                           mService.id = hash;
                           resolve(mService);
                         })
