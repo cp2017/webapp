@@ -1,12 +1,13 @@
 pipeline:
   check:
-    image: cp2017/geth:2017-01-12.1
+    image: cp2017/geth:2017-01-13.1
     commands:
       - sleep 5
       - geth --exec 'eth.accounts' attach http://localhost:8545
   build:
     image: cp2017/xvfb
     commands:
+      - sleep 5
       - npm install typescript
       - npm install enhanced-resolve
       - npm install
@@ -22,7 +23,7 @@ services:
    container_name: ipfs
    pull: true
   geth:
-   image: cp2017/geth:2017-01-12.1
+   image: cp2017/geth:2017-01-13.1
    pull: true
    container_name: geth
    environment:
