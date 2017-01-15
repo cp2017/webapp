@@ -36,12 +36,14 @@ export class EthereumService {
         this._web3.eth.defaultAccount = this._web3.eth.accounts[0];
         this._accountPassword = accountPassword;
 
+        console.log(this._web3);
+
         this.unlockDefaultAccount().then(unlockResult => {
           // Get user registration contract
           let userRegistrationContract = this.web3.eth.contract(ContractProviderService.USER_REGISTRY_CONTRACT_ABI)
             .at(ContractProviderService.USER_REGISTRY_CONTRACT_ADDRESS);
-          console.log(userRegistrationContract);
           this.userContractAddress = userRegistrationContract.userContracts(this._web3.eth.defaultAccount);
+
           // Only deploy contractAddress if the user does not already have one
           if (this.userContractAddress == "0x") {
             this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
@@ -68,8 +70,8 @@ export class EthereumService {
 
   deployContract(contractAbi, compiledContract): Promise<string> {
     return new Promise((resolve, reject) => {
-      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 5000000}, (err, contract) => {
-        if (err) {
+      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 4700000}, (err, contract) => {
+        if (err != null) {
           reject(err);
           return;
           // callback fires twice, we only want the second call when the contract is deployed

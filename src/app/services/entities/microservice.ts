@@ -9,11 +9,20 @@ export class Microservice {
   private _publicKey:string;
   private _IPFS_VERSION_HISTORY: Array<string>;
   private _ipfsPreviousVersions: Array<Microservice>;
+  private _serviceContractAddress: string;
 
   constructor(name: string, description: string, hashToSwaggerFile?: string) {
     this._name = name;
     this._description = description;
     this._hashToSwaggerFile = hashToSwaggerFile;
+  }
+
+  get serviceContractAddress(): string {
+    return this._serviceContractAddress;
+  }
+
+  set serviceContractAddress(value: string) {
+    this._serviceContractAddress = value;
   }
 
   set id(id: string) {

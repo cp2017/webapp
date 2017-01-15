@@ -35,19 +35,20 @@ export class ServiceRepositoryService {
             microserviceObject.publicKey = publicKey;
             microserviceObject.price = price;
 
-            // 1. Add metadata and swagger description to IPFS
-            this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
-              console.log("Step 1 succeeded: Service added to IPFS:");
-              console.log(ipfsFile);
-              let serviceHash = ipfsFile.Hash;
+            // 1. Deploy Service contract
+            this._ethereumService.deployContract(ContractProviderService.SERVICE_CONTRACT_ABI, ContractProviderService.SERVICE_CONTRACT_BINARY)
+              .then(contractAddress => {
+                console.log("Step 1 succeeded: New contract for the service deployed " + contractAddress);
+                // Storing the contract address in the metadata
+                microserviceObject.serviceContractAddress = contractAddress;
 
-              // 2. Deploy Service contract
-              this._ethereumService.deployContract(ContractProviderService.SERVICE_CONTRACT_ABI, ContractProviderService.SERVICE_CONTRACT_BINARY)
-                .then(contractAddress => {
-                  console.log("Step 3 succeeded: New contract for the service deployed " + contractAddress);
-                  // TODO store contractAddress somewhere
+                // 2. Add metadata and swagger description to IPFS
+                this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
+                  console.log("Step 2 succeeded: Service added to IPFS:");
+                  console.log(ipfsFile);
+                  let serviceHash = ipfsFile.Hash;
 
-                  // 3. Call the ethereum contract to register that service
+                  // 3. Call the service registry contract to register that service
                   let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
                     .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
 
@@ -58,10 +59,11 @@ export class ServiceRepositoryService {
                   // 4. Done
                   resolve(serviceHash);
 
-                }).then(err => {
-                reject(err);
-              });
-            }).catch(err => {
+                }).catch(err => {
+                  reject(err);
+                });
+
+              }).then(err => {
               reject(err);
             });
           })
@@ -181,7 +183,7 @@ export class ServiceRepositoryService {
             if (err || !res) {
               reject(new Error("ipfs get service error" + err + res));
             } else {
-              // 2.2 Store the multihash addresses to the metadata.json and the swagger.json
+              // 2.2 Store the multihash addresses of the metadata.json and the swagger.json
               let metadataMultihash: string;
               let swaggerMultihash: string;
               for (let link of res._links) {
@@ -208,6 +210,8 @@ export class ServiceRepositoryService {
                           mService.IPNS_URI = serviceObj._IPNS_URI;
                           mService.publicKey = serviceObj._publicKey;
                           mService.id = hash;
+                          mService.serviceContractAddress = serviceObj._serviceContractAddress;
+
                           resolve(mService);
                         })
                         .catch(metadataErr => {

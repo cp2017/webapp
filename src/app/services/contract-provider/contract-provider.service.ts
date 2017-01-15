@@ -243,7 +243,7 @@ export class ContractProviderService {
     "type": "function"
   }, {"inputs": [], "type": "constructor", "payable": true}];
 
-  private static _USER_REGISTRY_CONTRACT_ADDRESS = "0xb50856af1f3fc6d2c97ac7bc6642f3662feb398b";
+  private static _USER_REGISTRY_CONTRACT_ADDRESS = "0x8ebf55d54a6d8db8020c1b3369f92baa8d648220";
   private static _USER_REGISTRY_CONTRACT_ABI = [{
     "constant": true,
     "inputs": [{"name": "", "type": "address"}],
