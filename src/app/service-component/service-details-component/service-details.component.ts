@@ -11,17 +11,11 @@ export class ServiceDetailsComponent implements OnInit {
 
   @Input('service') service: Microservice;
   private _baseUrl: string = "http://petstore.swagger.io";
-  private _swaggerUrl: string;
+  private _swaggerUrl: string = "https://ipfs.io/ipfs/";
   private _url: string;
 
   constructor() {
-    this.service = new Microservice("", "", "");
-    this._swaggerUrl = "http://your-url-here.com";
     this.buildUrl();
-  }
-
-  buildUrl() {
-    this._url = this._baseUrl + "?url=" + this._swaggerUrl;
   }
 
   ngOnInit() {
@@ -31,6 +25,10 @@ export class ServiceDetailsComponent implements OnInit {
       this._swaggerUrl = "https://ipfs.io/ipfs/" + this.service.hashToSwaggerFile;
       this.buildUrl();
     }
+  }
+
+  private buildUrl() {
+    this._url = this._baseUrl + "?url=" + this._swaggerUrl;
   }
 
   public get url(): string {
@@ -44,5 +42,6 @@ export class ServiceDetailsComponent implements OnInit {
   public get baseUrl(): string {
     return this._baseUrl;
   }
+
 
 }

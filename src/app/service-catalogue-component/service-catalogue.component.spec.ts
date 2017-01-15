@@ -36,11 +36,13 @@ describe('ServiceCatalogueComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ServiceCatalogueComponent);
     component = fixture.componentInstance;
+    spyOn(component, "ngOnInit");
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeDefined();
+    expect(component.ngOnInit).toHaveBeenCalled();
   });
 });
 
