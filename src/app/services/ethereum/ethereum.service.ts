@@ -63,6 +63,8 @@ export class EthereumService {
             console.log("Old user contract address: " + this.userContractAddress);
           }
           this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
+          // TODO: think whether it is good for a consumer to have a different public key for each consumed service?
+          this._userContract.setPublicKey("somerandompublickey", {gas: 5000000});
         }).catch(unlockErr => {
           console.log(unlockErr);
         });
@@ -78,7 +80,7 @@ export class EthereumService {
   deployContract(contractAbi, compiledContract): Promise<string> {
     return new Promise((resolve, reject) => {
       let count = 0;
-      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 5000000}, (err, contract) => {
+      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 7000000}, (err, contract) => {
         // callback fires twice, we only want the second call when the contract is deployed
         count = count + 1;
         if (count == 2) {

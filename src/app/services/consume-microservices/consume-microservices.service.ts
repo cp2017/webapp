@@ -24,6 +24,17 @@ export class ConsumeMicroservicesServiceService {
             console.log("Account unlocked");
             // TODO do the subscription: call the corresponding service contract
 
+            let price = microservice.price + 10;
+
+            let transactionId = this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, {
+              gas: 5000000,
+              value: price
+            });
+
+            console.log(transactionId);
+            console.log(this._ethereumService.userContract);
+
+            resolve(transactionId);
           })
           .catch(err => {
             console.error("Account unlock error: " + err);

@@ -43,6 +43,11 @@ export class ServiceRepositoryService {
                 // Storing the contract address in the metadata
                 microserviceObject.serviceContractAddress = contractAddress;
 
+                let serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI)
+                  .at(contractAddress);
+                serviceContract.setPrice(microserviceObject.price);
+                serviceContract.setPublicKey(microserviceObject.publicKey);
+
                 // 2. Add metadata and swagger description to IPFS
                 this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
                   console.log("Step 2 succeeded: Service added to IPFS:");
@@ -51,7 +56,7 @@ export class ServiceRepositoryService {
 
                   // 3. Call the service registry contract to register that service
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"),"{gas:4000000}");
+                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
 
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
@@ -116,7 +121,6 @@ export class ServiceRepositoryService {
       this._serviceRegistryContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
         .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
     }
-    console.log(this._serviceRegistryContract);
     return this._serviceRegistryContract;
   }
 

@@ -63,17 +63,13 @@ export class ContractProviderService {
     "payable": false,
     "type": "function"
   }, {
-    "constant": false,
-    "inputs": [{"name": "_publicKey", "type": "bytes32"}, {"name": "userAddress", "type": "address"}],
-    "name": "consume",
-    "outputs": [],
-    "payable": true,
-    "type": "function"
-  }, {
-    "constant": false,
-    "inputs": [],
-    "name": "withdraw",
-    "outputs": [],
+    "constant": true,
+    "inputs": [{"name": "", "type": "address"}],
+    "name": "myConsumedServices",
+    "outputs": [{"name": "serviceAddress", "type": "address"}, {
+      "name": "publicKey",
+      "type": "bytes32"
+    }, {"name": "lastUsage", "type": "uint256"}, {"name": "countUsage", "type": "uint256"}],
     "payable": false,
     "type": "function"
   }, {
@@ -93,58 +89,26 @@ export class ContractProviderService {
   }, {
     "constant": true,
     "inputs": [],
-    "name": "usersCount",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "type": "function"
-  }, {
-    "constant": false,
-    "inputs": [{"name": "providerAddress", "type": "address"}],
-    "name": "getMoney",
-    "outputs": [],
-    "payable": true,
-    "type": "function"
-  }, {
-    "constant": true,
-    "inputs": [],
     "name": "owner",
     "outputs": [{"name": "", "type": "address"}],
     "payable": false,
     "type": "function"
   }, {
-    "constant": false,
-    "inputs": [{"name": "_price", "type": "uint256"}],
-    "name": "setPrice",
-    "outputs": [],
-    "payable": false,
-    "type": "function"
-  }, {
     "constant": true,
-    "inputs": [],
-    "name": "sendingMoney",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "type": "function"
-  }, {
-    "constant": true,
-    "inputs": [],
-    "name": "sendingAddress",
-    "outputs": [{"name": "", "type": "address"}],
+    "inputs": [{"name": "", "type": "address"}],
+    "name": "myProvidedServices",
+    "outputs": [{"name": "serviceAddress", "type": "address"}, {
+      "name": "publicKey",
+      "type": "bytes32"
+    }, {"name": "lastUsage", "type": "uint256"}, {"name": "countUsage", "type": "uint256"}],
     "payable": false,
     "type": "function"
   }, {
     "constant": false,
-    "inputs": [],
-    "name": "sendMoney",
+    "inputs": [{"name": "_serviceAddress", "type": "address"}],
+    "name": "consumeService",
     "outputs": [],
-    "payable": false,
-    "type": "function"
-  }, {
-    "constant": true,
-    "inputs": [],
-    "name": "servicePrice",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
+    "payable": true,
     "type": "function"
   }, {"inputs": [], "type": "constructor", "payable": true}];
 
