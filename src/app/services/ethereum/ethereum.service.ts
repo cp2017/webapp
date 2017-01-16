@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import multihash from "multi-hash";
-import {ContractProviderService} from "../contract-provider/contract-provider.service";
+import { ContractProviderService } from "../contract-provider/contract-provider.service";
 declare var Web3: any;
 
 @Injectable()
@@ -15,11 +15,17 @@ export class EthereumService {
   // User contract address
   private userContractAddress: string;
 
+  private _userContract: any = null;
+
   constructor() {
   }
 
   get web3(): any {
     return this._web3;
+  }
+
+  get userContract(): any {
+    return this._userContract;
   }
 
   /**
@@ -45,7 +51,7 @@ export class EthereumService {
           this.userContractAddress = userRegistrationContract.userContracts(this._web3.eth.defaultAccount);
 
           // Only deploy contractAddress if the user does not already have one
-          if (this.userContractAddress == "0x") {
+          if (this.userContractAddress == "0x0000000000000000000000000000000000000000") {
             this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
               let result = userRegistrationContract.setUserContractAddress(contractAddress);
               this.userContractAddress = contractAddress;
@@ -56,6 +62,7 @@ export class EthereumService {
           } else {
             console.log("Old user contract address: " + this.userContractAddress);
           }
+          this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
         }).catch(unlockErr => {
           console.log(unlockErr);
         });
@@ -70,7 +77,7 @@ export class EthereumService {
 
   deployContract(contractAbi, compiledContract): Promise<string> {
     return new Promise((resolve, reject) => {
-      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 4700000}, (err, contract) => {
+      this._web3.eth.contract(contractAbi).new({ data: compiledContract, gas: 4700000 }, (err, contract) => {
         if (err != null) {
           reject(err);
           return;
@@ -127,7 +134,7 @@ export class EthereumService {
         this._web3.eth.defaultAccount = this._web3.eth.coinbase;
         // create contract
         console.log("Contract status: " + "transaction sent, waiting for confirmation");
-        this._web3.eth.contract(abi).new({data: code}, (err, contract) => {
+        this._web3.eth.contract(abi).new({ data: code }, (err, contract) => {
           console.log(code);
           if (err) {
             reject(err);

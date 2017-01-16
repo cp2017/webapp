@@ -53,7 +53,7 @@ export class ServiceRepositoryService {
                     .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
 
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                  let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+                  let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"),"{gas:4000000}");
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                   // 4. Done
