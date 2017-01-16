@@ -9,6 +9,7 @@ import multihash from "multi-hash";
 export class ServiceRepositoryService {
 
   private localServiceList: Microservice[];
+  private _serviceRegistryContract: any;
 
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
@@ -49,11 +50,8 @@ export class ServiceRepositoryService {
                   let serviceHash = ipfsFile.Hash;
 
                   // 3. Call the service registry contract to register that service
-                  let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-                    .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                  let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                   // 4. Done
@@ -112,6 +110,16 @@ export class ServiceRepositoryService {
   }
 
 
+  private get serviceRegistryContract(): any {
+    if (!this._serviceRegistryContract) {
+      this._serviceRegistryContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+        .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+    }
+    console.log(this._serviceRegistryContract);
+    return this._serviceRegistryContract;
+  }
+
+
   /**
    * Returns all services that are registered at the marketplace
    * TODO
@@ -120,16 +128,12 @@ export class ServiceRepositoryService {
   getAllServices(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        console.log('ipfs + ethereum : ok');
-        // TODO:
         // 1. Get all hashes from the Blockchain
 
-        let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-          .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-        let servicesCount = serviceRegistery.servicesCount();
+        let servicesCount = this.serviceRegistryContract.servicesCount();
         let serviceHashList: string[] = [];
         for (let i = 1; i <= servicesCount; i++) {
-          serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
+          serviceHashList.push(multihash.encode(this.serviceRegistryContract.services(i)));
         }
         console.log('ServicesCount ' + servicesCount);
         console.log('serviceHashList ' + serviceHashList.length);
