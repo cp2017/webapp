@@ -166,6 +166,37 @@ export class IpfsService {
     return promise;
   }
 
+  /**
+   * Gets an IPNS file as string for a given name
+   * @param name The name which is the address for your file
+   * @returns {Promise<T>} A promise that resolves the file as a string as soon as we got it from IPFS
+   */
+  public getFromIpns(name: string): Promise<string> {
+    let promise = new Promise((resolve, reject) => {
+      // buffer: true results in the returned result being a buffer rather than a stream
+      this._node.files.stat('/services/'+name+'/', (newServiceDirErr, newServiceDirRes) => {
+                        if (newServiceDirErr || !newServiceDirRes) {
+                          reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
+                        } else {
+                          resolve(newServiceDirRes.Hash);
+                        }
+                      });
+
+      // this.node.name.resolve(this._nodeId+"/"+name, (err, res) => {
+      //   if (err || !res) {
+      //     console.error('ipns resolve error', err, res);
+      //     reject(err);
+      //   }
+        
+      //   let path:string = res.Path;
+      //   let cutter:string="/ipfs/";
+      //   let hash:string=path.substring(cutter.length-1);
+
+        
+      // });
+    });
+    return promise;
+  }
 
   /*
    *************************************************
