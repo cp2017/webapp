@@ -77,14 +77,17 @@ export class EthereumService {
 
   deployContract(contractAbi, compiledContract): Promise<string> {
     return new Promise((resolve, reject) => {
-      this._web3.eth.contract(contractAbi).new({ data: compiledContract, gas: 4700000 }, (err, contract) => {
-        if (err != null) {
-          reject(err);
-          return;
-          // callback fires twice, we only want the second call when the contract is deployed
-        } else if (contract.address) {
-          let myContract = contract;
-          resolve(myContract.address);
+      let count = 0;
+      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 5000000}, (err, contract) => {
+        // callback fires twice, we only want the second call when the contract is deployed
+        count = count + 1;
+        if (count == 2) {
+          if (err != null) {
+            reject(err);
+          } else if (contract.address) {
+            let myContract = contract;
+            resolve(myContract.address);
+          }
         }
       });
     });

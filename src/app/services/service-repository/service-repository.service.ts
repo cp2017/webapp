@@ -63,7 +63,7 @@ export class ServiceRepositoryService {
                   reject(err);
                 });
 
-              }).then(err => {
+              }).catch(err => {
               reject(err);
             });
           })
