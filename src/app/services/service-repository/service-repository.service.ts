@@ -51,7 +51,8 @@ export class ServiceRepositoryService {
 
                   // 3. Call the service registry contract to register that service
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"),"{gas:4000000}");
+
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                   // 4. Done
