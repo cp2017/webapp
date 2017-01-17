@@ -65,6 +65,7 @@ export class EthereumService {
           this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
           // TODO: think whether it is good for a consumer to have a different public key for each consumed service?
           this._userContract.setPublicKey("somerandompublickey", {gas: 5000000});
+          this._userContract.fund({value:10000});
         }).catch(unlockErr => {
           console.log(unlockErr);
         });

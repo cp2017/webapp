@@ -47,6 +47,7 @@ export class ServiceRepositoryService {
                   .at(contractAddress);
                 serviceContract.setPrice(microserviceObject.price);
                 serviceContract.setPublicKey(microserviceObject.publicKey);
+                console.log(serviceContract);
 
                 // 2. Add metadata and swagger description to IPFS
                 this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
