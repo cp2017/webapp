@@ -49,11 +49,13 @@ export class SubscribeServiceComponentComponent implements OnInit {
   subscriptionSuccess(serviceSubscription: ServiceSubscription): void {
     // TODO show a summary of the new subscription
     console.log(serviceSubscription);
+    this.loading = false;
   }
 
   subscriptionError(err): void {
     // TODO show error on UI
     alert(err);
     console.log(err);
+    this.loading = false;
   }
 }
