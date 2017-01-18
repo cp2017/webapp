@@ -51,7 +51,7 @@ export class EthereumService {
           this.userContractAddress = userRegistrationContract.userContracts(this._web3.eth.defaultAccount);
 
           // Only deploy contractAddress if the user does not already have one
-          if (this.userContractAddress == "0x0000000000000000000000000000000000000000") {
+          if (this.userContractAddress.match("0x0*$")) {
             this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
               let result = userRegistrationContract.setUserContractAddress(contractAddress);
               this.userContractAddress = contractAddress;
