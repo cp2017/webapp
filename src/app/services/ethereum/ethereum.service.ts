@@ -63,6 +63,7 @@ export class EthereumService {
             console.log("Old user contract address: " + this.userContractAddress);
           }
           this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
+          console.log(this._userContract);
         }).catch(unlockErr => {
           console.log(unlockErr);
         });

@@ -20,15 +20,16 @@ export class ConsumeMicroservicesServiceService {
           .then(result => {
             console.log("Account unlocked: " + result);
 
-            let transactionId = this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, {
+            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, {
               gas: 10000000
             }, (consumeError, consumeSuccess) => {
 
               if (consumeError || !consumeSuccess) {
                 reject(new Error("ethereum service consume error" + consumeError));
               } else {
+                console.log("Consume service success, transaction id: " + consumeSuccess);
                 console.log(this._ethereumService.userContract);
-                resolve(transactionId);
+                resolve(consumeSuccess);
               }
             });
           })
