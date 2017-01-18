@@ -47,6 +47,7 @@ export class ServiceRepositoryService {
                   .at(contractAddress);
                 serviceContract.setPrice(microserviceObject.price);
                 serviceContract.setPublicKey(microserviceObject.publicKey);
+                microserviceObject.serviceContract = serviceContract;
                 console.log(serviceContract);
 
                 // 2. Add metadata and swagger description to IPFS
@@ -220,9 +221,14 @@ export class ServiceRepositoryService {
                           mService.IPNS_URI = serviceObj._IPNS_URI;
                           mService.publicKey = serviceObj._publicKey;
                           mService.id = hash;
-                          // TODO It would be better to get the price from the service contract instead of IPFS
-                          mService.price = serviceObj._price;
                           mService.serviceContractAddress = serviceObj._serviceContractAddress;
+                          mService.serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI)
+                            .at(mService.serviceContractAddress);
+                          mService.price = mService.serviceContract.servicePrice();
+                          mService.balance = this._ethereumService.web3.eth.getBalance(mService.serviceContractAddress);
+                          mService.numberConsumers = mService.serviceContract.usersCount();
+
+
 
                           resolve(mService);
                         })
