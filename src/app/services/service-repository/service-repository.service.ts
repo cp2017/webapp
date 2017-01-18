@@ -220,6 +220,8 @@ export class ServiceRepositoryService {
                           mService.IPNS_URI = serviceObj._IPNS_URI;
                           mService.publicKey = serviceObj._publicKey;
                           mService.id = hash;
+                          // TODO It would be better to get the price from the service contract instead of IPFS
+                          mService.price = serviceObj._price;
                           mService.serviceContractAddress = serviceObj._serviceContractAddress;
 
                           resolve(mService);

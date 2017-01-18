@@ -1,14 +1,15 @@
 <spinner id="app-list-spinner" [active]="loading"></spinner>
-
 <h1>Subscribe to microservice</h1>
-<h2 *ngIf="service != null">Service: {{service.name}}</h2>
 <div class="row">
   <div class="col-xs-12 gutter">
-    <div class="register-service content-box">
-      <service-details *ngIf="service != null" [service]="service"></service-details>
+    <div *ngIf="service != null" class="register-service content-box">
+      <service-details [service]="service"></service-details>
       <form (ngSubmit)="consumeService()">
         <div class="row">
-          <div class="form-group col-xs-12">
+          <div class="col-xs-6">
+            <b>Price: </b>{{service.price + " Ether"}}
+          </div>
+          <div class="form-group col-xs-6">
             <button class="btn btn-lg btn-primary btn-block submit-btn" type="submit">
               Consume microservice
             </button>
