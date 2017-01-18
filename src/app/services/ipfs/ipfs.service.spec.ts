@@ -38,6 +38,7 @@ describe('IpfsService', () => {
       ).catch(err => {
           resolved = true;
           // We don't expect an error
+          console.error(err.message);
           expect(err).toBeUndefined();
         }
       );
