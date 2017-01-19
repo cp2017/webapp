@@ -8,22 +8,30 @@ import {ContractProviderService} from "../contract-provider/contract-provider.se
 @Injectable()
 export class ConsumeMicroservicesServiceService {
 
-  private consumedServices: Microservice[];
-
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
 
-
-  consumeService(microservice: Microservice, consumerPublicKey: string): Promise<ServiceSubscription> {
+  consumeService(microservice: Microservice): Promise<ServiceSubscription> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
         // 0. Unlock the default ethereum account by calling the unlockAccount function of the ethereum service
         this._ethereumService.unlockDefaultAccount()
           .then(result => {
-            console.log("Account unlocked");
-            // TODO do the subscription: call the corresponding service contract
+            console.log("Account unlocked: " + result);
 
+            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, {
+              gas: 10000000
+            }, (consumeError, consumeSuccess) => {
+
+              if (consumeError || !consumeSuccess) {
+                reject(new Error("ethereum service consume error" + consumeError));
+              } else {
+                console.log("Consume service success, transaction id: " + consumeSuccess);
+                console.log(this._ethereumService.userContract);
+                resolve(consumeSuccess);
+              }
+            });
           })
           .catch(err => {
             console.error("Account unlock error: " + err);

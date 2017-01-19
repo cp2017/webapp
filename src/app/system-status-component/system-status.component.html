@@ -37,7 +37,8 @@
         <h3>Test contract</h3>
         <p>Deploy and call a test contract <br>
           (this only works if you have the <b>solidity compiler solc installed</b> and added to
-          the path variables of your local system. It can take some time until the contract is mined -> check the javascript
+          the path variables of your local system. It can take some time until the contract is mined -> check the
+          javascript
           console)</p>
         <button (click)="createTestContract()">Create example contract</button>
         <div>{{"Contract code: " + testContractCode}}</div>
@@ -50,6 +51,53 @@
           <div>{{"Result: "+testContractResult}}</div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div style="visibility: hidden" class="col-md-5 col-sm-5 col-xs-12 gutter">
+
+    <div class="content-box">
+
+    </div>
+  </div>
+  <div *ngIf="ethereumVersion != null && _ethereumService.userContract != null && userContractBalance != null" class="col-md-7 col-sm-7 col-xs-12 gutter">
+
+    <div class="account-status content-box">
+      <h2>User Contract (Account) Information</h2>  
+      <div>
+        <div>{{"Balance: " + userContractBalance + " Ether"}}</div>
+        <div>{{"User public key: " +userContractPublicKey}}</div>
+        <button (click)="updateUserContractInfo()">Refresh</button>
+        <button *ngIf="!editUserFormOpen" (click)="editUserForm()">Edit user account</button>
+      </div>
+         
+      <form *ngIf="editUserFormOpen" (ngSubmit)="editUserAccount()">
+        <div class="row">
+          <div class="form-group col-xs-12">
+            <label for="consumer_public_key">Consumer public key</label>
+            <input id="consumer_public_key" class="form-control" name="consumer_public_key"
+                   [(ngModel)]="newConsumerPublicKey"
+                   placeholder="Public key of the consumer (used so sign the message)" required>
+          </div>
+          <div class="form-group col-xs-12">
+            <label for="user_fund">Transfer Ether to user contract</label>
+            <input id="user_fund" class="form-control" name="user_fund"
+                   [(ngModel)]="addToUserFund" type="number" step="0.0001"
+                   placeholder="Transfer this amount of ether to your marketplace user account" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-xs-12">
+            <button class="btn btn-lg btn-primary btn-block submit-btn" type="submit">
+              Update user account
+            </button>
+          </div>
+        </div>
+      </form>
+
     </div>
   </div>
 </div>

@@ -9,6 +9,7 @@ import multihash from "multi-hash";
 export class ServiceRepositoryService {
 
   private localServiceList: Microservice[];
+  private _serviceRegistryContract: any;
 
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
@@ -35,33 +36,40 @@ export class ServiceRepositoryService {
             microserviceObject.publicKey = publicKey;
             microserviceObject.price = price;
 
-            // 1. Add metadata and swagger description to IPFS
-            this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
-              console.log("Step 1 succeeded: Service added to IPFS:");
-              console.log(ipfsFile);
-              let serviceHash = ipfsFile.Hash;
+            // 1. Deploy Service contract
+            this._ethereumService.deployContract(ContractProviderService.SERVICE_CONTRACT_ABI, ContractProviderService.SERVICE_CONTRACT_BINARY)
+              .then(contractAddress => {
+                console.log("Step 1 succeeded: New contract for the service deployed " + contractAddress);
+                // Storing the contract address in the metadata
+                microserviceObject.serviceContractAddress = contractAddress;
 
-              // 2. Deploy Service contract
-              this._ethereumService.deployContract(ContractProviderService.SERVICE_CONTRACT_ABI, ContractProviderService.SERVICE_CONTRACT_BINARY)
-                .then(contractAddress => {
-                  console.log("Step 3 succeeded: New contract for the service deployed " + contractAddress);
-                  // TODO store contractAddress somewhere
+                let serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI)
+                  .at(contractAddress);
+                serviceContract.setPrice(microserviceObject.price);
+                serviceContract.setPublicKey(microserviceObject.publicKey);
+                microserviceObject.serviceContract = serviceContract;
+                console.log(serviceContract);
 
-                  // 3. Call the ethereum contract to register that service
-                  let registrationContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-                    .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+                // 2. Add metadata and swagger description to IPFS
+                this._ipfsService.putServiceToIpfs(microserviceObject, swaggerJson).then(ipfsFile => {
+                  console.log("Step 2 succeeded: Service added to IPFS:");
+                  console.log(ipfsFile);
+                  let serviceHash = ipfsFile.Hash;
 
+                  // 3. Call the service registry contract to register that service
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
-                  let result = registrationContract.register("0x" + multihash.decode(serviceHash).toString("hex"));
+                  let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
+
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                   // 4. Done
                   resolve(serviceHash);
 
-                }).then(err => {
-                reject(err);
-              });
-            }).catch(err => {
+                }).catch(err => {
+                  reject(err);
+                });
+
+              }).catch(err => {
               reject(err);
             });
           })
@@ -110,6 +118,15 @@ export class ServiceRepositoryService {
   }
 
 
+  private get serviceRegistryContract(): any {
+    if (!this._serviceRegistryContract) {
+      this._serviceRegistryContract = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
+        .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
+    }
+    return this._serviceRegistryContract;
+  }
+
+
   /**
    * Returns all services that are registered at the marketplace
    * TODO
@@ -118,16 +135,12 @@ export class ServiceRepositoryService {
   getAllServices(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        console.log('ipfs + ethereum : ok');
-        // TODO:
         // 1. Get all hashes from the Blockchain
 
-        let serviceRegistery = this._ethereumService.web3.eth.contract(ContractProviderService.REGISTRY_CONTRACT_ABI)
-          .at(ContractProviderService.REGISTRY_CONTRACT_ADDRESS);
-        let servicesCount = serviceRegistery.servicesCount();
+        let servicesCount = this.serviceRegistryContract.servicesCount();
         let serviceHashList: string[] = [];
         for (let i = 1; i <= servicesCount; i++) {
-          serviceHashList.push(multihash.encode(serviceRegistery.services(i)));
+          serviceHashList.push(multihash.encode(this.serviceRegistryContract.services(i)));
         }
         console.log('ServicesCount ' + servicesCount);
         console.log('serviceHashList ' + serviceHashList.length);
@@ -181,7 +194,7 @@ export class ServiceRepositoryService {
             if (err || !res) {
               reject(new Error("ipfs get service error" + err + res));
             } else {
-              // 2.2 Store the multihash addresses to the metadata.json and the swagger.json
+              // 2.2 Store the multihash addresses of the metadata.json and the swagger.json
               let metadataMultihash: string;
               let swaggerMultihash: string;
               for (let link of res._links) {
@@ -208,6 +221,15 @@ export class ServiceRepositoryService {
                           mService.IPNS_URI = serviceObj._IPNS_URI;
                           mService.publicKey = serviceObj._publicKey;
                           mService.id = hash;
+                          mService.serviceContractAddress = serviceObj._serviceContractAddress;
+                          mService.serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI)
+                            .at(mService.serviceContractAddress);
+                          mService.price = mService.serviceContract.servicePrice();
+                          mService.balance = this._ethereumService.web3.eth.getBalance(mService.serviceContractAddress);
+                          mService.numberConsumers = mService.serviceContract.usersCount();
+
+
+
                           resolve(mService);
                         })
                         .catch(metadataErr => {

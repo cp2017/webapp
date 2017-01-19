@@ -6,8 +6,19 @@
 </div>
 <div class="row">
   <div class="col-xs-12 gutter">
-    <div class="service-details content-box">
-      <iframe width="100%" height="500px" id="swaggerFrame" [src]="url | safe"></iframe>
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" href="#collapse1"><b>Swagger API description</b></a>
+          </h4>
+        </div>
+        <div id="collapse1" class="panel-collapse collapse">
+          <div class="panel-body service-details content-box">
+            <iframe width="100%" height="500px" id="swaggerFrame" [src]="url | safe"></iframe>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

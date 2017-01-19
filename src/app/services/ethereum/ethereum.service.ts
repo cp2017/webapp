@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import multihash from "multi-hash";
-import {ContractProviderService} from "../contract-provider/contract-provider.service";
+import { ContractProviderService } from "../contract-provider/contract-provider.service";
 declare var Web3: any;
 
 @Injectable()
@@ -15,11 +15,17 @@ export class EthereumService {
   // User contract address
   private userContractAddress: string;
 
+  private _userContract: any = null;
+
   constructor() {
   }
 
   get web3(): any {
     return this._web3;
+  }
+
+  get userContract(): any {
+    return this._userContract;
   }
 
   /**
@@ -36,14 +42,16 @@ export class EthereumService {
         this._web3.eth.defaultAccount = this._web3.eth.accounts[0];
         this._accountPassword = accountPassword;
 
+        console.log(this._web3);
+
         this.unlockDefaultAccount().then(unlockResult => {
           // Get user registration contract
           let userRegistrationContract = this.web3.eth.contract(ContractProviderService.USER_REGISTRY_CONTRACT_ABI)
             .at(ContractProviderService.USER_REGISTRY_CONTRACT_ADDRESS);
-          console.log(userRegistrationContract);
           this.userContractAddress = userRegistrationContract.userContracts(this._web3.eth.defaultAccount);
+
           // Only deploy contractAddress if the user does not already have one
-          if (this.userContractAddress == "0x") {
+          if (this.userContractAddress.match("0x0*$")) {
             this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
               let result = userRegistrationContract.setUserContractAddress(contractAddress);
               this.userContractAddress = contractAddress;
@@ -54,6 +62,8 @@ export class EthereumService {
           } else {
             console.log("Old user contract address: " + this.userContractAddress);
           }
+          this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
+          console.log(this._userContract);
         }).catch(unlockErr => {
           console.log(unlockErr);
         });
@@ -66,16 +76,39 @@ export class EthereumService {
     return promise;
   }
 
+  editUserAccount(fund:number, publicKey:string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.userContract.setPublicKey(publicKey, {gas: 5000000}, (err, res) => {
+        if (err || !res) {
+          reject(new Error("ethereum user contrac error" + err + res));
+        } else {
+          this.userContract.fund({value:fund}, (fundErr, fundRes) => {
+            if (fundErr || !fundRes) {
+              reject(new Error("ethereum user contrac error" + fundErr + fundRes));
+            } else {
+              console.log(res);
+              console.log(fundRes);
+              resolve(this.userContract);
+            }
+          });
+        }
+      });
+    });
+  }
+
   deployContract(contractAbi, compiledContract): Promise<string> {
     return new Promise((resolve, reject) => {
-      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 5000000}, (err, contract) => {
-        if (err) {
-          reject(err);
-          return;
-          // callback fires twice, we only want the second call when the contract is deployed
-        } else if (contract.address) {
-          let myContract = contract;
-          resolve(myContract.address);
+      let count = 0;
+      this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 7000000}, (err, contract) => {
+        // callback fires twice, we only want the second call when the contract is deployed
+        count = count + 1;
+        if (count == 2) {
+          if (err != null) {
+            reject(err);
+          } else if (contract.address) {
+            let myContract = contract;
+            resolve(myContract.address);
+          }
         }
       });
     });
@@ -125,7 +158,7 @@ export class EthereumService {
         this._web3.eth.defaultAccount = this._web3.eth.coinbase;
         // create contract
         console.log("Contract status: " + "transaction sent, waiting for confirmation");
-        this._web3.eth.contract(abi).new({data: code}, (err, contract) => {
+        this._web3.eth.contract(abi).new({ data: code }, (err, contract) => {
           console.log(code);
           if (err) {
             reject(err);
