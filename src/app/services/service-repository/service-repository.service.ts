@@ -253,7 +253,9 @@ export class ServiceRepositoryService {
   }
 
   /**
-   * Fetches the consumed services of the ethereum user
+   * Fetches of the ethereum user consumed services by getting the ipfs hashes
+   * from the blockchain and then getting the microservices metadata from IPFS.
+   * @returns {Promise<T>} Returns a promise that resolves a list of microservices
    */
   public getConsumedServices(): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -321,40 +323,41 @@ export class ServiceRepositoryService {
   getAllMyServicesByIpns(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        // TODO: change the hardcoded IPNS hash
-        this._ipfsService.node.name.resolve('Qmd2cxH6JMEdirw3WAYdRjPLd3GWLjWEFNreyw5Cy3Nh3Y', (ipnsErr, ipnsRes) => {
-          if (ipnsErr || !ipnsRes) {
-            reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
-          } else {
-            let servicesDirectoryHash: string = ipnsRes.Path.split('/ipfs/', 2)[1];
-            this._ipfsService.node.object.get(servicesDirectoryHash, (err, res) => {
-              if (err || !res) {
-                reject(new Error("ipfs get services directory error" + err + res));
-              } else {
-                // serviceList needs to be var instead of let, so that the change detection in the components work
-                var serviceList: Array<Microservice> = new Array<Microservice>();
-                for (let link of res._links) {
-                  this._ipfsService.node.object.stat(link._multihash, (statsErr, statsRes) => {
-                    if (statsErr || !statsRes) {
-                      reject(new Error("ipfs get services directory error" + statsErr + statsRes));
-                    } else {
-                      let serviceHash = statsRes.Hash;
-                      this.getServiceByIpfs(serviceHash)
-                        .then(myService => {
-                          serviceList.push(myService);
-                          console.log(serviceList);
-                        })
-                        .catch(myServiceErr => {
-                            reject(myServiceErr);
-                          }
-                        );
-                    }
-                  });
+        this._ipfsService.node.id().then(version => {
+          this._ipfsService.node.name.resolve(version.id, (ipnsErr, ipnsRes) => {
+            if (ipnsErr || !ipnsRes) {
+              reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
+            } else {
+              let servicesDirectoryHash: string = ipnsRes.Path.split('/ipfs/', 2)[1];
+              this._ipfsService.node.object.get(servicesDirectoryHash, (err, res) => {
+                if (err || !res) {
+                  reject(new Error("ipfs get services directory error" + err + res));
+                } else {
+                  // serviceList needs to be var instead of let, so that the change detection in the components work
+                  var serviceList: Array<Microservice> = new Array<Microservice>();
+                  for (let link of res._links) {
+                    this._ipfsService.node.object.stat(link._multihash, (statsErr, statsRes) => {
+                      if (statsErr || !statsRes) {
+                        reject(new Error("ipfs get services directory error" + statsErr + statsRes));
+                      } else {
+                        let serviceHash = statsRes.Hash;
+                        this.getServiceByIpfs(serviceHash)
+                          .then(myService => {
+                            serviceList.push(myService);
+                            console.log(serviceList);
+                          })
+                          .catch(myServiceErr => {
+                              reject(myServiceErr);
+                            }
+                          );
+                      }
+                    });
+                  }
+                  resolve(serviceList);
                 }
-                resolve(serviceList);
-              }
-            });
-          }
+              });
+            }
+          });
         });
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
