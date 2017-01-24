@@ -9,6 +9,8 @@ import multihash from "multi-hash";
 export class ServiceRepositoryService {
 
   private localServiceList: Microservice[];
+  private localConsumedServiceList: Microservice[];
+
   private _serviceRegistryContract: any;
 
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
@@ -59,6 +61,8 @@ export class ServiceRepositoryService {
                   // 3. Call the service registry contract to register that service
                   // console.log("0x" + multihash.decode(serviceHash).toString("hex"));
                   let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
+                  // Also store the ipfs hash in the service contract that was just deployed
+                  serviceContract.setIpfsHash("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
 
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
@@ -244,6 +248,48 @@ export class ServiceRepositoryService {
         } else {
           reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
         }
+      }
+    });
+  }
+
+  /**
+   * Fetches the consumed services of the ethereum user
+   */
+  public getConsumedServices(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
+
+        // 1. Get all the service contracts of the consumed services
+        let consumedServicesCount = this._ethereumService.userContract.consumedServicesCount();
+        let consumedServiceContractList: any[] = [];
+        for (let i = 1; i <= consumedServicesCount; i++) {
+          let serviceContractAddress = this._ethereumService.userContract.consumedServices(i);
+          let serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI).at(serviceContractAddress);
+          consumedServiceContractList.push(serviceContract);
+        }
+
+        // 2. Get the ipfs address from the service contracts
+        let consumedServiceIpfsHashList: any[] = [];
+        for (let serviceContract of consumedServiceContractList) {
+          consumedServiceIpfsHashList.push(multihash.encode(serviceContract.ipfsHash()));
+        }
+
+        // 3. Get the services from IPFS using the ipfs addresses from the service contracts
+        let microservices: Microservice[] = [];
+        for (let serviceHash of consumedServiceIpfsHashList) {
+          this.getServiceByIpfs(serviceHash)
+            .then((mService: Microservice) => {
+              microservices.push(mService);
+              console.log(mService);
+            })
+            .catch(microserviceErr => {
+              reject(microserviceErr);
+            });
+        }
+        this.localConsumedServiceList = microservices;
+        resolve(microservices);
+      } else {
+        reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
       }
     });
   }

@@ -66,7 +66,7 @@ export class SystemStatusComponent implements OnInit {
   }
 
   private updateUserContractInfo():void {
-    this.userContractBalance = this._ethereumService.userContract.money();
+    this.userContractBalance = this._ethereumService.userContract.eth();
     // TODO The returned format from the contract is not casted to a plain javascript string
     this.userContractPublicKey = this._ethereumService.userContract.publicKey();
   }
