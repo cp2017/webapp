@@ -17,6 +17,10 @@ export class IpfsService {
     return this._node;
   }
 
+  get nodeId(): number {
+    return this._nodeId;
+  }
+
   /**
    * Connects to a locally running IPFS daemon if not already done. If the connection to the daemon was already initialized,
    * we return the already initialized connection.

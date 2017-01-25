@@ -264,7 +264,7 @@ export class ServiceRepositoryService {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
         // TODO: change the hardcoded IPNS hash
-        this._ipfsService.node.name.resolve('Qmd2cxH6JMEdirw3WAYdRjPLd3GWLjWEFNreyw5Cy3Nh3Y', (ipnsErr, ipnsRes) => {
+        this._ipfsService.node.name.resolve(this._ipfsService.nodeId, (ipnsErr, ipnsRes) => {
           if (ipnsErr || !ipnsRes) {
             reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
           } else {
