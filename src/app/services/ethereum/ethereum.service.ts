@@ -55,15 +55,17 @@ export class EthereumService {
             this.deployContract(ContractProviderService.USER_CONTRACT_ABI, ContractProviderService.USER_CONTRACT_BINARY).then(contractAddress => {
               let result = userRegistrationContract.setUserContractAddress(contractAddress);
               this.userContractAddress = contractAddress;
-              console.log("New user contract address: " + this.userContractAddress);
+              this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
+              console.log("New user contract: ");
+              console.log(this._userContract);
             }).catch(err => {
               console.log(err);
             });
           } else {
-            console.log("Old user contract address: " + this.userContractAddress);
+            this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
+            console.log("Old user contract address: ");
+            console.log(this._userContract);
           }
-          this._userContract = this.web3.eth.contract(ContractProviderService.USER_CONTRACT_ABI).at(this.userContractAddress);
-          console.log(this._userContract);
         }).catch(unlockErr => {
           console.log(unlockErr);
         });
