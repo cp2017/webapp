@@ -5,7 +5,8 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancleEdit()"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancleEdit()"><span
+          aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Edit Microservice</h4>
       </div>
       <div class="modal-body">
@@ -22,7 +23,7 @@
 </div><!-- /.modal -->
 
 <h1>My services</h1>
-<input class="pull-right" type="text" (input)="field = 'searchText'" #searchText  (keyup)="0" placeholder="Search...">
+<input class="pull-right" type="text" (input)="field = 'searchText'" #searchText (keyup)="0" placeholder="Search...">
 <div class="row">
   <div class="col-xs-12 gutter">
     <div class="my-services content-box">
@@ -31,6 +32,8 @@
         <tr>
           <th>Name</th>
           <th>Description</th>
+          <th>No. consumers</th>
+          <th>Balance</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -38,7 +41,10 @@
         <tr *ngFor="let myService of myServices | serviceFilter:searchText.value">
           <td>{{myService.name}}</td>
           <td>{{myService.description}}</td>
-          <td><a style="cursor: pointer" (click)="editServiceModal(myService)" data-toggle="modal" data-target="#editServiceModal">Edit service</a></td>
+          <td>{{myService.numberConsumers}}</td>
+          <td>{{myService.balance + " Ether"}}</td>
+          <td><a style="cursor: pointer" (click)="editServiceModal(myService)" data-toggle="modal"
+                 data-target="#editServiceModal">Edit service</a></td>
         </tr>
         </tbody>
       </table>
@@ -55,6 +61,7 @@
         <tr>
           <th>Name</th>
           <th>Description</th>
+          <th>Public Key</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -62,7 +69,9 @@
         <tr *ngFor="let subscribedService of subscribedServices | serviceFilter:searchText.value ">
           <td>{{subscribedService.name}}</td>
           <td>{{subscribedService.description}}</td>
-          <td><a *ngIf="subscribedService.hashToSwaggerFile" [routerLink]="['/service-details', subscribedService.id]">Show details</a></td>
+          <td>TODO</td>
+          <td><a *ngIf="subscribedService.hashToSwaggerFile" [routerLink]="['/service-details', subscribedService.id]">Show
+            details</a></td>
         </tr>
         </tbody>
       </table>

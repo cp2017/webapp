@@ -32,6 +32,12 @@ export class SystemStatusComponent implements OnInit {
   private testContractParam: number;
   private testContractResult: any;
 
+  // Ethereum user contract
+  private editUserFormOpen:boolean = false;
+  private userContractBalance:number;
+  private userContractPublicKey:string;
+  private addToUserFund: number;
+  private newConsumerPublicKey: string;
 
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
@@ -53,7 +59,16 @@ export class SystemStatusComponent implements OnInit {
       this.ethereumClientVersion = web3Ethereum.version.node;
       this.ethereumNetworkProtocolVersion = web3Ethereum.version.network;
       this.ethereumVersion = web3Ethereum.version.ethereum;
+      if (this._ethereumService.userContract) {
+        this.updateUserContractInfo();
+      }
     });
+  }
+
+  private updateUserContractInfo():void {
+    this.userContractBalance = this._ethereumService.userContract.eth();
+    // TODO The returned format from the contract is not casted to a plain javascript string
+    this.userContractPublicKey = this._ethereumService.userContract.publicKey();
   }
 
   private onIpfsConnectClick() {
@@ -84,5 +99,22 @@ export class SystemStatusComponent implements OnInit {
     }).catch(err => {
       console.error(err);
     });
+  }
+
+  private editUserAccount() {
+    this._ethereumService.editUserAccount(this.addToUserFund, this.newConsumerPublicKey).then(userContract => {
+      console.log("User successfully updated");
+      console.log(userContract);
+      this.updateUserContractInfo();
+      this.editUserFormOpen = false;
+    }).catch(err => {
+      // TODO: Do something with this error (show it on the UI)
+      alert(err);
+      console.log(err);
+    });
+  }
+
+  private editUserForm() {
+    this.editUserFormOpen = true;
   }
 }

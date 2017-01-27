@@ -27,6 +27,23 @@ export class MyServicesComponent implements OnInit {
     this._serviceRepositoryService.getAllMyServicesByIpns()
       .then(services => this.requestMyServicesSuccess(services))
       .catch(err => this.requestMyServicesError(err));
+
+    this._serviceRepositoryService.getConsumedServices()
+      .then(services => this.requestConsumedServicesSuccess(services))
+      .catch(err => this.requestConsumedServicesError(err));
+  }
+
+  private requestConsumedServicesSuccess(services: Array<Microservice>) {
+    console.log("Consumed services:");
+    console.log(services);
+    this.subscribedServices = services;
+    this.loading = false;
+  }
+
+  private requestConsumedServicesError(err: any) {
+    alert(err);
+    console.log(err);
+    this.loading = false;
   }
 
   private requestMyServicesSuccess(services: Array<Microservice>) {

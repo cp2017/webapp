@@ -1,20 +1,27 @@
 <spinner id="app-list-spinner" [active]="loading"></spinner>
-
 <h1>Subscribe to microservice</h1>
-<h2 *ngIf="service != null">Service: {{service.name}}</h2>
 <div class="row">
-  <div *ngIf="newServiceHashAddress == undefined" class="col-xs-12 gutter">
-    <div class="register-service content-box">
+  <div class="col-xs-12 gutter">
+    <div *ngIf="service != null" class="register-service content-box">
+      <service-details [service]="service"></service-details>
       <form (ngSubmit)="consumeService()">
         <div class="row">
-          <div class="form-group col-xs-12">
-            <label for="consumer_public_key">Consumer public key</label>
-            <input id="consumer_public_key" class="form-control" name="consumer_public_key"
-                      [(ngModel)]="consumerPublicKey"
-                      placeholder="Public key of the consumer (used so sign the message)" required>
+          <div class="col-xs-6">
+            <b>Price: </b>{{service.price + " Ether"}}
           </div>
-        </div>
-        <div class="row">
+          <div class="dropdown form-group col-xs-6">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Dropdown
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">Separated link</a></li>
+            </ul>
+          </div>
           <div class="form-group col-xs-12">
             <button class="btn btn-lg btn-primary btn-block submit-btn" type="submit">
               Consume microservice

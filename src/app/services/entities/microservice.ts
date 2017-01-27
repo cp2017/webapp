@@ -9,11 +9,31 @@ export class Microservice {
   private _publicKey:string;
   private _IPFS_VERSION_HISTORY: Array<string>;
   private _ipfsPreviousVersions: Array<Microservice>;
+  private _serviceContractAddress: string;
+  private _serviceContract:any;
+  private _balance:any;
+  private _numberConsumers:number;
 
   constructor(name: string, description: string, hashToSwaggerFile?: string) {
     this._name = name;
     this._description = description;
     this._hashToSwaggerFile = hashToSwaggerFile;
+  }
+
+  get numberConsumers(): number {
+    return this._numberConsumers;
+  }
+
+  set numberConsumers(value: number) {
+    this._numberConsumers = value;
+  }
+
+  get serviceContractAddress(): string {
+    return this._serviceContractAddress;
+  }
+
+  set serviceContractAddress(value: string) {
+    this._serviceContractAddress = value;
   }
 
   set id(id: string) {
@@ -74,5 +94,21 @@ export class Microservice {
 
   set ipfsPreviousVersions(value: Array<Microservice>) {
     this._ipfsPreviousVersions = value;
+  }
+
+  get serviceContract(): any {
+    return this._serviceContract;
+  }
+
+  set serviceContract(value: any) {
+    this._serviceContract = value;
+  }
+
+  get balance(): any {
+    return this._balance;
+  }
+
+  set balance(value: any) {
+    this._balance = value;
   }
 }

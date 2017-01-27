@@ -59,6 +59,8 @@ export class IpfsService {
                 resolve(node);
               }
             });
+            // This tog breaks the test
+        //    console.log(this._node);
           })
           .catch((err) => {
             console.log('Connect Ipfs Daemon failed: ' + err.message);

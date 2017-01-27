@@ -13,6 +13,8 @@ import {ActivatedRoute} from "@angular/router";
 import {RouterTestingModule} from "@angular/router/testing";
 import {MockActivatedRoute} from "../services/mocks/mock-activated-route.service";
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
+import {ServiceDetailsComponent} from "../service-component/service-details-component/service-details.component";
+import {SafePipe} from "../pipes/safe-url.pipe";
 
 describe('SubscribeServiceComponentComponent', () => {
   let component: SubscribeServiceComponentComponent;
@@ -23,7 +25,7 @@ describe('SubscribeServiceComponentComponent', () => {
       imports: [
         RouterTestingModule, FormsModule
       ],
-      declarations: [SubscribeServiceComponentComponent, SpinnerComponent],
+      declarations: [SubscribeServiceComponentComponent, SpinnerComponent, ServiceDetailsComponent, SafePipe],
       providers: [
         ServiceRepositoryService,
         ConsumeMicroservicesServiceService,

@@ -82,6 +82,6 @@ describe('EthereumService', () => {
       // Wait two seconds and check whether the promise is resolved
       setTimeout(() => {
         expect(resolved).toBeTruthy();
-      }, 2000);
+      }, 4000);
     })));
 });
