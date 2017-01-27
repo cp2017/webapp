@@ -138,6 +138,7 @@ export class ServiceRepositoryService {
    */
   getAllServices(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
+      let resolved = false;
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
         // 1. Get all hashes from the Blockchain
 
@@ -153,19 +154,31 @@ export class ServiceRepositoryService {
         //let serviceHashList: string[] = ["Qmc33Sjp9xzRW5zbXPhUQCBfuFSqckuYkYN1nD7btSeYjq",
         //"Qmem6Dv6pVjXLXcw8gKUqWHycSo8r63gLyeMVBxeGxBbYd"];
 
+        let allMicroserviceVersions: Microservice[] = [];
+        let ipnsURIList: String[] = [];
         let microservices: Microservice[] = [];
         for (let serviceHash of serviceHashList) {
           this.getServiceByIpfs(serviceHash)
             .then((mService: Microservice) => {
-              microservices.push(mService);
+              allMicroserviceVersions.push(mService);
+              if (ipnsURIList.indexOf(mService.IPNS_URI) == -1) {
+                console.log("IPNS URI:" + mService.IPNS_URI);
+                ipnsURIList.push(mService.IPNS_URI);
+                this.getServiceByIpnsUri(mService.IPNS_URI)
+                  .then((ipnsService: Microservice) => {
+                    microservices.push(ipnsService);
+                    if (!resolved) {
+                      this.localServiceList = microservices;
+                      resolve(microservices);
+                    }
+                  });
+              }
               console.log(mService);
             })
             .catch(microserviceErr => {
               reject(microserviceErr);
             });
         }
-        this.localServiceList = microservices;
-        resolve(microservices);
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
       }
@@ -231,7 +244,6 @@ export class ServiceRepositoryService {
                           mService.price = mService.serviceContract.servicePrice();
                           mService.balance = this._ethereumService.web3.eth.getBalance(mService.serviceContractAddress);
                           mService.numberConsumers = mService.serviceContract.usersCount();
-
 
 
                           resolve(mService);
@@ -323,41 +335,39 @@ export class ServiceRepositoryService {
   getAllMyServicesByIpns(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        this._ipfsService.node.id().then(version => {
-          this._ipfsService.node.name.resolve(version.id, (ipnsErr, ipnsRes) => {
-            if (ipnsErr || !ipnsRes) {
-              reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
-            } else {
-              let servicesDirectoryHash: string = ipnsRes.Path.split('/ipfs/', 2)[1];
-              this._ipfsService.node.object.get(servicesDirectoryHash, (err, res) => {
-                if (err || !res) {
-                  reject(new Error("ipfs get services directory error" + err + res));
-                } else {
-                  // serviceList needs to be var instead of let, so that the change detection in the components work
-                  var serviceList: Array<Microservice> = new Array<Microservice>();
-                  for (let link of res._links) {
-                    this._ipfsService.node.object.stat(link._multihash, (statsErr, statsRes) => {
-                      if (statsErr || !statsRes) {
-                        reject(new Error("ipfs get services directory error" + statsErr + statsRes));
-                      } else {
-                        let serviceHash = statsRes.Hash;
-                        this.getServiceByIpfs(serviceHash)
-                          .then(myService => {
-                            serviceList.push(myService);
-                            console.log(serviceList);
-                          })
-                          .catch(myServiceErr => {
-                              reject(myServiceErr);
-                            }
-                          );
-                      }
-                    });
-                  }
-                  resolve(serviceList);
+        this._ipfsService.node.name.resolve(this._ipfsService.nodeId, (ipnsErr, ipnsRes) => {
+          if (ipnsErr || !ipnsRes) {
+            reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
+          } else {
+            let servicesDirectoryHash: string = ipnsRes.Path.split('/ipfs/', 2)[1];
+            this._ipfsService.node.object.get(servicesDirectoryHash, (err, res) => {
+              if (err || !res) {
+                reject(new Error("ipfs get services directory error" + err + res));
+              } else {
+                // serviceList needs to be var instead of let, so that the change detection in the components work
+                var serviceList: Array<Microservice> = new Array<Microservice>();
+                for (let link of res._links) {
+                  this._ipfsService.node.object.stat(link._multihash, (statsErr, statsRes) => {
+                    if (statsErr || !statsRes) {
+                      reject(new Error("ipfs get services directory error" + statsErr + statsRes));
+                    } else {
+                      let serviceHash = statsRes.Hash;
+                      this.getServiceByIpfs(serviceHash)
+                        .then(myService => {
+                          serviceList.push(myService);
+                          console.log(serviceList);
+                        })
+                        .catch(myServiceErr => {
+                            reject(myServiceErr);
+                          }
+                        );
+                    }
+                  });
                 }
-              });
-            }
-          });
+                resolve(serviceList);
+              }
+            });
+          }
         });
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
@@ -367,19 +377,18 @@ export class ServiceRepositoryService {
   }
 
   /**
-   * Gets the service metadata and ownership information for one service specified by the given IPNS address.
-   * TODO
-   * @param hash The hash of the service that we want to receive
+   * Gets the service metadata and ownership information for one service specified by the given IPNS URI.
+   * @param ipnsUri The IPNS URI of the service that we want to receive
    * @returns {Promise<T>}
    */
-  getServiceByIpns(hash: string): Promise<any> {
+  getServiceByIpnsUri(ipnsUri: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        // TODO:
-        // 1. Fetch the service metadata from IPFS for the given hash
-        // (maybe get the owner from the blockchain)
-        // 2. Done
-        resolve("TODO");
+        this._ipfsService.getFromIpns(ipnsUri).then(hash => {
+          this.getServiceByIpfs(hash).then(service => {
+            resolve(service);
+          });
+        });
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
       }

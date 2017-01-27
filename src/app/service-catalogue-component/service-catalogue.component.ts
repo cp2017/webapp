@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ServiceRepositoryService} from "../services/service-repository/service-repository.service";
 import {Microservice} from "../services/entities/microservice";
 import {ServiceFilterPipe} from "../pipes/service-filter.pipe";
@@ -11,21 +11,25 @@ import {ServiceFilterPipe} from "../pipes/service-filter.pipe";
 
 export class ServiceCatalogueComponent implements OnInit {
 
-  private services : Microservice[];
+  private services: Microservice[];
+  private loading: boolean = true;
 
-  constructor(private _serviceRepositoryService:ServiceRepositoryService) { }
+  constructor(private _serviceRepositoryService: ServiceRepositoryService) {
+  }
 
   ngOnInit() {
     this._serviceRepositoryService.getAllServices().then(services => this.requestAllServicesSuccess(services)).catch(err => this.requestAllServicesError(err));
   }
 
-  private requestAllServicesSuccess(services:Microservice[]) {
+  private requestAllServicesSuccess(services: Microservice[]) {
     this.services = services;
+    this.loading = false;
   }
 
-  private requestAllServicesError(err:any) {
+  private requestAllServicesError(err: any) {
     alert(err);
     console.log(err);
+    this.loading = false;
   }
 
 }

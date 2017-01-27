@@ -10,6 +10,7 @@ import {ServiceRepositoryService} from "../services/service-repository/service-r
 import {IpfsService} from "../services/ipfs/ipfs.service";
 import {EthereumService} from "../services/ethereum/ethereum.service";
 import {ServiceFilterPipe} from "../pipes/service-filter.pipe";
+import {SpinnerComponent} from "../directives/spinner/spinner.component";
 
 describe('ServiceCatalogueComponent', () => {
   let component: ServiceCatalogueComponent;
@@ -24,9 +25,10 @@ describe('ServiceCatalogueComponent', () => {
           }
         ])
       ],
-      declarations: [ 
+      declarations: [
         ServiceCatalogueComponent,
         ServiceFilterPipe,
+        SpinnerComponent
       ],
       providers: [ServiceRepositoryService, IpfsService, EthereumService]
     })
