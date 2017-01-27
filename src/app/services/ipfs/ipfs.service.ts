@@ -8,7 +8,7 @@ export class IpfsService {
 
   // The connection to the IPFS daemon
   private _node: any = null;
-  private _nodeId: number;
+  private _nodeId: string;
 
   constructor() {
   }
@@ -17,7 +17,7 @@ export class IpfsService {
     return this._node;
   }
 
-  get nodeId(): number {
+  get nodeId(): string {
     return this._nodeId;
   }
 
@@ -60,7 +60,7 @@ export class IpfsService {
               }
             });
             // This tog breaks the test
-        //    console.log(this._node);
+            //    console.log(this._node);
           })
           .catch((err) => {
             console.log('Connect Ipfs Daemon failed: ' + err.message);
@@ -173,35 +173,40 @@ export class IpfsService {
   }
 
   /**
-   * Gets an IPNS file as string for a given name
-   * @param name The name which is the address for your file
-   * @returns {Promise<T>} A promise that resolves the file as a string as soon as we got it from IPFS
+   * Resolves the IPFS hash of a service from its IPNS URI. If there are multiple versions of a service, this
+   * always resolves to the newest one.
+   * @param ipnsUri The IPNS URI of the service
+   * @returns {Promise<T>} A promise that resolves the services hash as soon as we got it from IPFS and IPNS
    */
-  public getFromIpns(name: string): Promise<string> {
-    let promise = new Promise((resolve, reject) => {
-      // buffer: true results in the returned result being a buffer rather than a stream
-      this._node.files.stat('/services/'+name+'/', (newServiceDirErr, newServiceDirRes) => {
-                        if (newServiceDirErr || !newServiceDirRes) {
-                          reject(new Error("ipfs add error" + newServiceDirErr + newServiceDirRes));
-                        } else {
-                          resolve(newServiceDirRes.Hash);
-                        }
-                      });
-
-      // this.node.name.resolve(this._nodeId+"/"+name, (err, res) => {
-      //   if (err || !res) {
-      //     console.error('ipns resolve error', err, res);
-      //     reject(err);
-      //   }
-        
-      //   let path:string = res.Path;
-      //   let cutter:string="/ipfs/";
-      //   let hash:string=path.substring(cutter.length-1);
-
-        
-      // });
+  public getFromIpns(ipnsUri: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let ipnsHash = decodeURI(ipnsUri).split('/', 6)[4];
+      let serviceDirName = decodeURI(ipnsUri).split('/', 6)[5];
+      this.node.name.resolve(ipnsHash, (ipnsErr, ipnsRes) => {
+        if (ipnsErr || !ipnsRes) {
+          reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
+        } else {
+          let servicesDirectoryHash: string = ipnsRes.Path.split('/', 3)[2];
+          this._node.object.get(servicesDirectoryHash, (dirErr, servicesDir) => {
+            if (dirErr || !servicesDir) {
+              reject(new Error("ipns resolve error" + dirErr + servicesDir));
+            } else {
+              for (let link of servicesDir._links) {
+                if (link._name == serviceDirName) {
+                  this.node.object.stat(link._multihash, (statsErr, statsRes) => {
+                    if (statsErr || !statsRes) {
+                      reject(new Error("ipns resolve error" + statsErr + statsRes));
+                    } else {
+                      resolve(statsRes.Hash);
+                    }
+                  });
+                }
+              }
+            }
+          });
+        }
+      });
     });
-    return promise;
   }
 
   /*

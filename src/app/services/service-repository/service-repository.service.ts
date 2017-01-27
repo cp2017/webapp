@@ -138,6 +138,7 @@ export class ServiceRepositoryService {
    */
   getAllServices(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
+      let resolved = false;
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
         // 1. Get all hashes from the Blockchain
 
@@ -163,9 +164,13 @@ export class ServiceRepositoryService {
               if (ipnsURIList.indexOf(mService.IPNS_URI) == -1) {
                 console.log("IPNS URI:" + mService.IPNS_URI);
                 ipnsURIList.push(mService.IPNS_URI);
-                this.getServiceByIpns(mService.name)
+                this.getServiceByIpnsUri(mService.IPNS_URI)
                   .then((ipnsService: Microservice) => {
                     microservices.push(ipnsService);
+                    if (!resolved) {
+                      this.localServiceList = microservices;
+                      resolve(microservices);
+                    }
                   });
               }
               console.log(mService);
@@ -174,8 +179,6 @@ export class ServiceRepositoryService {
               reject(microserviceErr);
             });
         }
-        this.localServiceList = microservices;
-        resolve(microservices);
       } else {
         reject(new Error("You have to connect to the IPFS and Ethereum networks first first!"));
       }
@@ -332,8 +335,6 @@ export class ServiceRepositoryService {
   getAllMyServicesByIpns(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-
-        // TODO: change the hardcoded IPNS hash
         this._ipfsService.node.name.resolve(this._ipfsService.nodeId, (ipnsErr, ipnsRes) => {
           if (ipnsErr || !ipnsRes) {
             reject(new Error("ipns resolve error" + ipnsErr + ipnsRes));
@@ -376,20 +377,14 @@ export class ServiceRepositoryService {
   }
 
   /**
-   * Gets the service metadata and ownership information for one service specified by the given IPNS address.
-   * TODO
-   * @param name The name of the service that we want to receive
+   * Gets the service metadata and ownership information for one service specified by the given IPNS URI.
+   * @param ipnsUri The IPNS URI of the service that we want to receive
    * @returns {Promise<T>}
    */
-  getServiceByIpns(name: string): Promise<any> {
+  getServiceByIpnsUri(ipnsUri: string): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
-        // TODO:
-        // 1. Fetch the service metadata from IPFS for the given name
-        // (maybe get the owner from the blockchain)
-        // 2. Done
-        this._ipfsService.getFromIpns(name).then(hash => {
-          //TODO: create microservice instance
+        this._ipfsService.getFromIpns(ipnsUri).then(hash => {
           this.getServiceByIpfs(hash).then(service => {
             resolve(service);
           });
