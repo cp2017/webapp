@@ -13,7 +13,8 @@ export class MyServicesComponent implements OnInit {
   private myServices: Array<Microservice>;
   private subscribedServices: Array<Microservice>;
   private editService: Microservice;
-  private loading: boolean = false;
+  private loadingConsumed: boolean = false;
+  private loadingMy: boolean = false;
 
 
   constructor(private _serviceRepositoryService: ServiceRepositoryService, private ref: ChangeDetectorRef) {
@@ -22,7 +23,8 @@ export class MyServicesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = true;
+    this.loadingMy = true;
+    this.loadingConsumed = true;
     this.setUpLocalChangeDetector();
     this._serviceRepositoryService.getAllMyServicesByIpns()
       .then(services => this.requestMyServicesSuccess(services))
@@ -37,26 +39,26 @@ export class MyServicesComponent implements OnInit {
     console.log("Consumed services:");
     console.log(services);
     this.subscribedServices = services;
-    this.loading = false;
+    this.loadingConsumed = false;
   }
 
   private requestConsumedServicesError(err: any) {
     alert(err);
     console.log(err);
-    this.loading = false;
+    this.loadingConsumed = false;
   }
 
   private requestMyServicesSuccess(services: Array<Microservice>) {
     console.log("My services:");
     console.log(services);
     this.myServices = services;
-    this.loading = false;
+    this.loadingMy = false;
   }
 
   private requestMyServicesError(err: any) {
     alert(err);
     console.log(err);
-    this.loading = false;
+    this.loadingMy = false;
   }
 
   private editServiceModal(microservice: Microservice): void {
