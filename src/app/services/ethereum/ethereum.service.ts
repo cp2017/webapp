@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import multihash from "multi-hash";
-import { ContractProviderService } from "../contract-provider/contract-provider.service";
+import {ContractProviderService} from "../contract-provider/contract-provider.service";
 declare var Web3: any;
 
 @Injectable()
@@ -78,13 +78,13 @@ export class EthereumService {
     return promise;
   }
 
-  editUserAccount(fund:number, publicKey:string): Promise<any> {
+  editUserAccount(fund: number, publicKey: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.userContract.setPublicKey(publicKey, {gas: 5000000}, (err, res) => {
         if (err || !res) {
           reject(new Error("ethereum user contrac error" + err + res));
         } else {
-          this.userContract.fund({value:fund}, (fundErr, fundRes) => {
+          this.userContract.fund({value: fund}, (fundErr, fundRes) => {
             if (fundErr || !fundRes) {
               reject(new Error("ethereum user contrac error" + fundErr + fundRes));
             } else {
@@ -104,6 +104,12 @@ export class EthereumService {
       this._web3.eth.contract(contractAbi).new({data: compiledContract, gas: 7000000}, (err, contract) => {
         // callback fires twice, we only want the second call when the contract is deployed
         count = count + 1;
+
+        if (err) {
+          reject(err);
+          count = -1;
+        }
+
         if (count == 2) {
           if (err != null) {
             reject(err);
@@ -160,7 +166,7 @@ export class EthereumService {
         this._web3.eth.defaultAccount = this._web3.eth.coinbase;
         // create contract
         console.log("Contract status: " + "transaction sent, waiting for confirmation");
-        this._web3.eth.contract(abi).new({ data: code }, (err, contract) => {
+        this._web3.eth.contract(abi).new({data: code}, (err, contract) => {
           console.log(code);
           if (err) {
             reject(err);
