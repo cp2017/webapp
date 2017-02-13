@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import multihash from "multi-hash";
 import {ContractProviderService} from "../contract-provider/contract-provider.service";
+import * as ethereumjsUtil from "ethereumjs-util";
 declare var Web3: any;
+
 
 @Injectable()
 export class EthereumService {
@@ -35,6 +37,7 @@ export class EthereumService {
    * @returns {Promise<T>} Returns a promise that resolves the web3 object it is connected to the ethereum client.
    */
   initWeb3(provider: string = "http://localhost:8545", accountPassword: string = "pw0"): Promise<any> {
+    console.log(ethereumjsUtil);
     let promise = new Promise((resolve, reject) => {
       if (this._web3 == null) {
         let httpProvider = new (<any>Web3).providers.HttpProvider(provider);
@@ -84,7 +87,7 @@ export class EthereumService {
         if (err || !res) {
           reject(new Error("ethereum user contrac error" + err + res));
         } else {
-          this.userContract.fund({value: fund}, (fundErr, fundRes) => {
+          this.userContract.fund({value: fund, gas: 5000000}, (fundErr, fundRes) => {
             if (fundErr || !fundRes) {
               reject(new Error("ethereum user contrac error" + fundErr + fundRes));
             } else {
@@ -96,6 +99,10 @@ export class EthereumService {
         }
       });
     });
+  }
+
+  getBalanceDefaultAccount() {
+    return this._web3.fromWei(this._web3.eth.getBalance(this._web3.eth.defaultAccount), "ether");
   }
 
   deployContract(contractAbi, compiledContract): Promise<string> {

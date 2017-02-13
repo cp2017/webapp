@@ -38,6 +38,7 @@ export class SystemStatusComponent implements OnInit {
   private userContractPublicKey:string;
   private addToUserFund: number;
   private newConsumerPublicKey: string;
+  private defaultAccountBalance: string;
 
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
@@ -69,6 +70,7 @@ export class SystemStatusComponent implements OnInit {
     this.userContractBalance = this._ethereumService.userContract.eth();
     // TODO The returned format from the contract is not casted to a plain javascript string
     this.userContractPublicKey = this._ethereumService.userContract.publicKey();
+    this.defaultAccountBalance = this._ethereumService.getBalanceDefaultAccount().toString();
   }
 
   private onIpfsConnectClick() {

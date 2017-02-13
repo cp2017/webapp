@@ -15,6 +15,7 @@ export class SubscribeServiceComponentComponent implements OnInit {
   private loading: boolean = false;
   private serviceHash: string = null;
   private service: Microservice = null;
+  private monitoringRequired:boolean = true;
 
   constructor(private route: ActivatedRoute, private _serviceRepositoryService: ServiceRepositoryService, private _consumeMicroservicesService: ConsumeMicroservicesServiceService) {
   }
@@ -37,12 +38,17 @@ export class SubscribeServiceComponentComponent implements OnInit {
   }
 
   consumeService() {
+
     this.loading = true;
-    this._consumeMicroservicesService.consumeService(this.service).then(serviceSubscription => {
+    this._consumeMicroservicesService.consumeService(this.service, this.monitoringRequired).then(serviceSubscription => {
       this.subscriptionSuccess(serviceSubscription);
     }).catch(err => {
       this.subscriptionError(err);
     })
+  }
+
+  private selectMonitoring(monitoringRequired) {
+    this.monitoringRequired = monitoringRequired;
   }
 
   subscriptionSuccess(serviceSubscription: ServiceSubscription): void {

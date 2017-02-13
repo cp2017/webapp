@@ -1,8 +1,52 @@
-<h1>Dashboard</h1>
 <div class="row">
   <div class="col-xs-12 gutter">
-    <div class="marketplace-dashboard content-box">
-      Todo: Show essential information
+
+    <div class="ipfs-status content-box">
+
+      <div class="panel panel-item panelable">
+        <div class="welcome-header">
+          <h2>Welcome to the Distributed Service Marketplace</h2>
+        </div>
+        <div class="welcome-body">
+          <div class="row">
+            <div class="col-xs-6 col-sm-3">
+              <h4>Next Steps</h4>
+              <ul>
+                <li><i class="fa fa-cogs"></i> <a routerLink="/system-status">Connect IPFS and Ethereum</a></li>
+                <li><i class="fa fa-money"></i> <a routerLink="/system-status">Charge your user account</a></li>
+                <li><i class="fa fa-pencil-square-o"></i> <a routerLink="/register">Register your services</a></li>
+              </ul>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+              <h4>More Actions</h4>
+              <ul style="list-style-type: none">
+                <li>
+                  <i class="fa fa-search"></i> <a routerLink="/catalogue" class="clicky-thing">Discover services</a>
+                </li>
+                <li>
+                  <i class="fa fa-server"></i> <a routerLink="/my-services" class="clicky-thing">Manage your
+                  services</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Todo: Chart with current consumers -->
+    <!--div class="marketplace-dashboard content-box">
+      <div style="display: block;">
+        <canvas baseChart width="400" height="400"
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [colors]="lineChartColors"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)"></canvas>
+      </div>
+    </div-->
   </div>
 </div>

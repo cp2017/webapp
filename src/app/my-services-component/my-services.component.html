@@ -61,7 +61,7 @@
         <tr>
           <th>Name</th>
           <th>Description</th>
-          <th>Public Key</th>
+          <!--th>Public Key</th-->
           <th>Actions</th>
         </tr>
         </thead>
@@ -69,7 +69,7 @@
         <tr *ngFor="let subscribedService of subscribedServices | serviceFilter:searchText.value ">
           <td>{{subscribedService.name}}</td>
           <td>{{subscribedService.description}}</td>
-          <td>TODO</td>
+          <!--td> not done yet </td-->
           <td><a *ngIf="subscribedService.hashToSwaggerFile" [routerLink]="['/service-details', subscribedService.id]">Show
             details</a></td>
         </tr>

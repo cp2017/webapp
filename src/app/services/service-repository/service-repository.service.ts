@@ -25,7 +25,7 @@ export class ServiceRepositoryService {
    * @returns {Promise<T>} Returns a promise that resolves the service hash as soon as all the steps
    * are done and the service is registered.
    */
-  registerService(name: string, description: string, swaggerJson: string, publicKey: string, price: number = 0): Promise<any> {
+  registerService(name: string, description: string, swaggerJson: string, publicKey: string, price: number = 0, availability:number = 99, serviceUrl:string): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -63,7 +63,9 @@ export class ServiceRepositoryService {
                   let result = this.serviceRegistryContract.register("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
                   // Also store the ipfs hash in the service contract that was just deployed
                   serviceContract.setIpfsHash("0x" + multihash.decode(serviceHash).toString("hex"), {gas: 4000000});
-
+                  serviceContract.setSla(availability, {gas: 5000000});
+                  serviceContract.setServiceUrl(serviceUrl, {gas: 5000000});
+                  serviceContract.setMonitorAddress(ContractProviderService.MONITOR_CONTRACT_ADDRESS, {gas: 5000000});
                   console.log("Step 3 succeeded: Ethereum transaction id " + result);
 
                   // 4. Done

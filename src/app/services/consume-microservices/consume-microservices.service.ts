@@ -11,7 +11,7 @@ export class ConsumeMicroservicesServiceService {
   constructor(private _ipfsService: IpfsService, private _ethereumService: EthereumService) {
   }
 
-  consumeService(microservice: Microservice): Promise<ServiceSubscription> {
+  consumeService(microservice: Microservice, monitoringRequired:boolean=true): Promise<ServiceSubscription> {
     return new Promise((resolve, reject) => {
       if (this._ipfsService.node != null && this._ethereumService.web3 != null) {
 
@@ -20,7 +20,7 @@ export class ConsumeMicroservicesServiceService {
           .then(result => {
             console.log("Account unlocked: " + result);
 
-            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, {
+            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, monitoringRequired, {
               gas: 10000000
             }, (consumeError, consumeSuccess) => {
 

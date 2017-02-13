@@ -32,25 +32,6 @@
         <div>Your ethereum client/node version is <b>{{ethereumClientVersion}}</b></div>
         <div>Your network protocol version is <b>{{ethereumNetworkProtocolVersion}}</b></div>
       </div>
-
-      <div *ngIf="ethereumVersion != null">
-        <h3>Test contract</h3>
-        <p>Deploy and call a test contract <br>
-          (this only works if you have the <b>solidity compiler solc installed</b> and added to
-          the path variables of your local system. It can take some time until the contract is mined -> check the
-          javascript
-          console)</p>
-        <button (click)="createTestContract()">Create example contract</button>
-        <div>{{"Contract code: " + testContractCode}}</div>
-        <div>{{"Contract status: " +testContractStatus}}</div>
-
-        <div *ngIf="testContract != null">
-          <input type="number" [(ngModel)]="testContractParam"
-                 placeholder='Parameter for contract (an integer, e.g. "8")'>
-          <button (click)="callTestContract()">Call example contract</button>
-          <div>{{"Result: "+testContractResult}}</div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -68,7 +49,8 @@
     <div class="account-status content-box">
       <h2>User Contract (Account) Information</h2>  
       <div>
-        <div>{{"Balance: " + userContractBalance + " Ether"}}</div>
+        <div>{{"Ethereum account balance: " + defaultAccountBalance + " Ether"}}</div>
+        <div>{{"Marketplace account balance: " + userContractBalance + " Ether"}}</div>
         <div>{{"User public key: " +userContractPublicKey}}</div>
         <button (click)="updateUserContractInfo()">Refresh</button>
         <button *ngIf="!editUserFormOpen" (click)="editUserForm()">Edit user account</button>

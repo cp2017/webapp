@@ -20,6 +20,7 @@ import { ServiceDetailsComponent } from './service-component/service-details-com
 import {SpinnerComponent} from "./directives/spinner/spinner.component";
 import { SubscribeServiceComponentComponent } from './subscribe-service-component/subscribe-service-component.component';
 import {ConsumeMicroservicesServiceService} from "./services/consume-microservices/consume-microservices.service";
+import {ChartsModule} from "ng2-charts";
 
 
 const appRoutes: Routes = [
@@ -52,6 +53,7 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     HttpModule,
+    ChartsModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [IpfsService, EthereumService, ServiceRepositoryService, ConsumeMicroservicesServiceService],

@@ -3,3 +3,4 @@
 declare module 'web3';
 declare module 'concat-stream';
 declare module 'multi-hash';
+declare module 'ethereumjs-util';
