@@ -19,8 +19,10 @@ export class ConsumeMicroservicesServiceService {
         this._ethereumService.unlockDefaultAccount()
           .then(result => {
             console.log("Account unlocked: " + result);
-
-            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, monitoringRequired, {
+            let monitor = 0;
+            if(monitoringRequired) monitor = 1;
+            console.log(monitor);
+            this._ethereumService.userContract.consumeService(microservice.serviceContractAddress, monitor, {
               gas: 10000000
             }, (consumeError, consumeSuccess) => {
 

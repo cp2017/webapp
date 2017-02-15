@@ -244,7 +244,8 @@ export class ServiceRepositoryService {
                           mService.serviceContract = this._ethereumService.web3.eth.contract(ContractProviderService.SERVICE_CONTRACT_ABI)
                             .at(mService.serviceContractAddress);
                           mService.price = mService.serviceContract.servicePrice();
-                          mService.balance = this._ethereumService.web3.eth.getBalance(mService.serviceContractAddress);
+                          //mService.balance = this._ethereumService.web3.eth.getBalance(mService.serviceContractAddress);
+                          mService.balance = mService.serviceContract.activeBalance();
                           mService.numberConsumers = mService.serviceContract.usersCount();
 
 
