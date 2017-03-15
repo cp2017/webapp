@@ -72,8 +72,6 @@ First thing you need to do is downloading all the dependencies. You do it by nav
 
 Then you can run a dev server by typing `ng serve`. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-The application automatically starts an IPFS deamon from the Browser and shows you some details for it. Now you can also connect the angular app to the running ethereum client on your computer by providing the HTTP-RPC host address (default: http:localhost:8545/ ).
-
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
