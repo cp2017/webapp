@@ -1,11 +1,14 @@
 # MarketClient [![Build Status](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/api/badges/cp2017/webapp/status.svg)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com/cp2017/webapp) [![Coverage](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/badges/cp2017/webapp/coverage.svg)](http://ec2-54-194-144-141.eu-west-1.compute.amazonaws.com:8080/cp2017/webapp)
 
-A simple proof of concept, that shows how we could combine IPFS and Ethereum in an Angular2 application.
+This Angular2 application implements the rich client application of the distributed service marketplace. Both, service provider as well as service consumer, who participate in the marketplace use this application to interact with the marketplace.
 
 What this application does:
 * Using the ipfs-api library, it connects to a separately running IPFS daemon
 * Using the web3.js library, it connects to a locally running ethereum client (e.g. the geth client)
-* You can enter some data and add them to IPFS
+* Both libraries are used to implement client side logic in so called angular services
+* The features are seperated by functionality into multiple components.
+* In general each view is represented by a different component.
+* In the different views you can: register services, buy service access, check the system status concerning IPFS and Ethereum connection, list the provided as well as consumed services.
 
 ## Set up your environment
 1. Download and install the node package manager (npm)
